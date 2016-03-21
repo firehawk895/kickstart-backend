@@ -49,16 +49,25 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(passport.initialize());
 
 /**
+ * update package.json to its latest version:
+ * http://stackoverflow.com/a/22849716/1881812
+ * npm install -g npm-check-updates
+ * npm-check-updates -u
+ * npm install
+ */
+/**
  * TODO : use schema validation
- * TODO : for package.json, do an npm update --save to generate the latest version numbers
- *        this will generate the version numbers that can now be used in production
+ */
+
+/**
+ * TODO : Its better to use JWT (JSON Web Token), migrate to json web token
  * so as to save these extra calls to the database
  * caching queries above the layer of orchestrate would be
  * the awesome way to go.
  */
 passport.use(new BearerStrategy({},
     function (token, done) {
-        //TODO : Its better to use JWT (JSON Web Token), migrate to json web token
+        //
         db.newGraphReader()
             .get()
             .from('tokens', token)

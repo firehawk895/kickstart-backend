@@ -1,0 +1,38 @@
+{
+  "name": "kickstart",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon ./bin/www"
+  },
+  "dependencies": {
+    "bcryptjs": "*",
+    "body-parser": "*",
+    "bunyan": "*",
+    "colors": "*",
+    "cors": "*",
+    "cron": "*",
+    "crypto": "*",
+    "debug":  "*",
+    "express":  "*",
+    "firebase":  "*",
+    "fs":  "*",
+    "jade":  "*",
+    "jsonwebtoken":  "*",
+    "lodash":  "*",
+    "morgan":  "*",
+    "msg91":  "*",
+    "msg91-sms":  "*",
+    "multer":  "*",
+    "orchestrate":  "*",
+    "passport":  "*",
+    "passport-http-bearer":  "*",
+    "random-string":  "*",
+    "request": "*",
+    "node-gcm":  "*",
+    "s3fs":  "*",
+    "validator":  "*",
+    "express-validator":  "*",
+    "kew":  "*"
+  }
+}

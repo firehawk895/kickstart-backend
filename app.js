@@ -1,0 +1,143 @@
+var express = require('express');
+var path = require('path');
+var fs = require('fs')
+var morgan = require('morgan');
+var bodyParser = require('body-parser');
+var cors = require('cors');
+var request = require('request')
+
+var passport = require('passport');
+var BearerStrategy = require('passport-http-bearer').Strategy;
+
+var config = require('./config.js');
+//----------------------------- Start Extended Validators --------------------------------------
+var validator = require('validator');
+
+//TODO : lets move to schema validation
+//validator.extend('isValidLatLong', function (latOrLong) {
+//    var regex = /^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,6}/
+//    return latOrLong.match(regex) ? true : false
+//})
+//
+//validator.extend('isImage', function (mimetype) {
+//    return mimetype.match(/^image/)
+//})
+////---------------------------- End Extended Validators -----------------------------------------
+var oio = require('orchestrate');
+oio.ApiEndPoint = config.db.region;
+var db = oio(config.db.key);
+
+var app = express();
+
+function failure() {
+    return false;
+}
+
+// create a write stream (in append mode)
+var accessLogStream = fs.createWriteStream(__dirname + '/access.log', {flags: 'a'})
+var corsOptions = {
+    origin: '*',
+    credentials: true
+};
+
+app.use(morgan(':remote-addr - [:date[clf]] - :method :url :status - :response-time ms', {stream: accessLogStream}))
+app.use(morgan('dev'))
+app.use(cors(corsOptions));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+app.use(passport.initialize());
+
+/**
+ * TODO : use schema validation
+ * TODO : for package.json, do an npm update --save to generate the latest version numbers
+ *        this will generate the version numbers that can now be used in production
+ * so as to save these extra calls to the database
+ * caching queries above the layer of orchestrate would be
+ * the awesome way to go.
+ */
+passport.use(new BearerStrategy({},
+    function (token, done) {
+        //TODO : Its better to use JWT (JSON Web Token), migrate to json web token
+        db.newGraphReader()
+            .get()
+            .from('tokens', token)
+            .related('hasUser')
+            .then(function (result) {
+                var user = result.body;
+                if (user.count === 1) {
+                    return done(null, user);
+                } else {
+                    console.log("token has no user");
+                    return done(null, false);
+                }
+                //console.log(result);
+            })
+            .fail(function (err) {
+                console.log("Token invalid or expired");
+                return done(null, false);
+            });
+    }
+));
+
+// view engine setup
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
+//app.use('/public', express.static(path.join(__dirname, 'public')));
+//app.use('/user', user);
+
+app.all('/ping', function (req, res) {
+    res.send('Pong')
+});
+
+// catch 404 and forward to error handler
+app.use(function (req, res, next) {
+    var err = new Error('Not Found');
+    err.status = 404;
+    next(err);
+});
+
+// error handlers
+
+// development error handler
+//// will print stacktrace
+//if (app.get('env') === 'development') {
+//  app.use(function (err, req, res, next) {
+//    res.status(err.status || 500);
+//    res.send(err);
+//  });
+//}
+//
+//// production error handler
+//// no stacktraces leaked to user
+//app.use(function (err, req, res, next) {
+//  res.status(err.status || 500);
+//  res.send(err);
+//});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+//if (app.get('env') === 'development') {
+app.use(function (err, req, res, next) {
+    console.log(err)
+    res.status(err.status || 500);
+    res.json({
+        errors: [err.message],
+        errorObj: err
+    });
+});
+//}
+
+// production error handler
+// no stacktraces leaked to user
+//app.use(function(err, req, res, next) {
+//  res.status(err.status || 500);
+//  res.render('error', {
+//    message: err.message,
+//    error: {}
+//  });
+//});
+
+module.exports = app;

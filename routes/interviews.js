@@ -11,6 +11,7 @@ var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var kew = require('kew');
+var passport = require('passport');
 
 /**
  * There are 2 choices to design this:

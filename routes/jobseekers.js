@@ -10,20 +10,20 @@ router.post('/', [passport.authenticate('bearer', {session: false}),function (re
     var jobSeekerPayload = {
         name : req.body.name,
         mobile : req.body.mobile,
-        education : req.body.education,
-        workEx : req.body.workEx,
+        educationLevel : parseInt(req.body.education),
+        workEx : parseInt(req.body.workEx),
         mobileVerified : false,
         interview_count : 0,
         location_name : req.body.location_name,
         location : {
-            lat : req.body.lat,
-            long : req.body.long
+            lat : parseFloat(req.body.lat),
+            long : parseFloat(req.body.long)
         },
         gender : req.body.gender,
-        dateOfBirth : req.body.dateOfBirth,
+        dateOfBirth : parseInt(req.body.dateOfBirth),
         preferredTrades : req.body.preferredTrades,
         otherTrade : req.body.otherTrade,
-        leaderId : leaderId //denormalized for easy search, but graph relationship included
+        leaderId : leaderId //denormalized for easy search, but graph relationships included
     }
 
     JobseekerModel.create(leaderId, jobSeekerPayload)

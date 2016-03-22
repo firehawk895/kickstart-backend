@@ -73,8 +73,28 @@ function generateToken(length) {
         return crypto.randomBytes(16).toString('hex');
 }
 
+/**
+ * inject the distance between the item and the user in km
+ * @param results orchestrate response of matches
+ * @param usersLat lat coordinates of the user
+ * @param usersLong long coordinates of the user
+ */
+var insertDistance = function (results, usersLat, usersLong) {
+    var newResults = results.body.results.map(function (aResult) {
+        aResult["value"]["distance"] = getDistanceFromLatLonInKm(
+            aResult["value"]["location"]["lat"],
+            aResult["value"]["location"]["long"],
+            usersLat,
+            usersLong
+        )
+        return aResult;
+    })
+    results.body.results = newResults
+    return results
+}
+
 module.exports = {
-    getDistanceFromLatLonInKm : getDistanceFromLatLonInKm,
+    insertDistance : insertDistance,
     sendErrors : sendErrors,
     sendSms : sendSms,
     generateToken : generateToken

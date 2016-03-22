@@ -175,11 +175,9 @@ function createAuthToken(userId) {
         "user": userId
     })
         .then(function (r) {
-            console.log("ya1")
             return dbUtils.createGraphRelationPromise('tokens', accessToken, 'users', userId, 'hasUser')
         })
         .then(function (r) {
-            console.log("ya2")
             returnToken.resolve(accessToken)
         })
         .fail(function (err) {

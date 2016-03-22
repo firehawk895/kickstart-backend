@@ -10,5 +10,18 @@ var date = new Date();
 var kew = require('kew');
 
 function getLeadersJobseekers(leaderId) {
-    dbUtils.getGraphResultsPromise('users', leaderId, cons)
+    var jobseekerPromise = kew.defer()
+    dbUtils.getGraphResultsPromise('users', leaderId, constants.graphsRelations.leader.myJobseekers)
+        .then(function (results) {
+            var injectedResults = dbUtils.injectId(results)
+            jobseekerPromise.resolve(injectedResults)
+        })
+        .fail(function (err) {
+            jobseekerPromise.reject(err)
+        })
+    return jobseekerPromise
+}
+
+module.exports = {
+    getLeadersJobseekers : getLeadersJobseekers
 }

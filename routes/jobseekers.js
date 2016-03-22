@@ -20,7 +20,10 @@ router.post('/', [passport.authenticate('bearer', {session: false}),function (re
             long : req.body.long
         },
         gender : req.body.gender,
-        dateOfBirth : req.body.dateOfBirth
+        dateOfBirth : req.body.dateOfBirth,
+        preferredTrades : req.body.preferredTrades,
+        otherTrade : req.body.otherTrade,
+        leaderId : leaderId //denormalized for easy search, but graph relationship included
     }
 
     JobseekerModel.create(leaderId, jobSeekerPayload)
@@ -35,9 +38,18 @@ router.post('/', [passport.authenticate('bearer', {session: false}),function (re
         })
 }])
 
-//schedule an interview
-router.post('/interview', function(req, res) {
-
+router.get('/', function(req, res) {
+    /**
+     * Note the leaderId is stored in this collection denormalized,
+     * however graph relations have been made as well to support
+     * the possibility of a jobseeker being connected to multiple leaders
+     */
+    //get all jobseekers
+    //params : trade, education, age, lat, long, radius
+    //if you send me a leaderId, then only the leaders jobseekers will appear
+    //or just use the leaders/jobseekers api,
+    //club graphResults along with filter
+    //sorted in increasing order of distance
 })
 
 module.exports = router

@@ -15,6 +15,7 @@ var customUtils = require('../utils')
 
 var date = new Date();
 var kew = require('kew');
+var bcrypt = require('bcryptjs');
 
 /**
  * The model method to signup/login a leader
@@ -24,35 +25,33 @@ var kew = require('kew');
  * @returns {!Promise}
  */
 function loginLeaderApi(name, mobile, otp) {
-    var leaderPayload = kew.defer()
-    var theLeaderData
+    var leaderPayloadPromise = kew.defer()
+    var leaderPayload
+    var message = "Your OTP : " + otp
 
-    getUserByPhoneNumber
-        .then(function (result) {
-            var message = "Your OTP : " + otp
-            var promises = [customUtils.sendSms(message, mobile)]
-            if (result.body.total_count === 0) {
-                promises.push(signUpLeader(name, mobile))
+    kew.all([getLeaderByPhoneNumber(mobile), customUtils.sendSms(message, mobile)])
+        .then(function (results) {
+            if (results[0].body.total_count === 0) {
+                console.log("a new signUp is happening")
+                return signUpLeader(name, mobile)
             } else {
-                promises.push(getLeaderByMobile(name, mobile))
+                console.log("existing leader")
+                return getLeaderByMobile(name, mobile)
             }
-            return kew.all(promises)
         })
         .then(function (results) {
-            //results[0] - sms status
-            //results[1] - leaderData
-            theLeaderData = results[1]
-            return createAuthToken()
-            //return results[2]
+            console.log("fir?")
+            leaderPayload = results
+            return createAuthToken(leaderPayload["id"])
         })
         .then(function (token) {
-            theLeaderData["access_token"] = token
-            leaderPayload.resolve(theLeaderData)
+            leaderPayload["access_token"] = token
+            leaderPayloadPromise.resolve(leaderPayload)
         })
         .fail(function (err) {
-            leaderPayload.reject(err)
+            leaderPayloadPromise.reject(err)
         })
-    return leaderPayload
+    return leaderPayloadPromise
 }
 
 /**
@@ -62,12 +61,13 @@ function loginLeaderApi(name, mobile, otp) {
  * @param password
  * @returns {!Promise}
  */
-function  signUpAdmin(name, mobile, password) {
+function signUpAdmin(name, mobile, password) {
     var signedUpUser = kew.defer()
-
     var theUser
-    checkIfNewUser
-        .then(function (result) {
+
+    checkIfNewUser(mobile)
+        .then(function (isNewUser) {
+            console.log("abbey")
             var hashedPassword = bcrypt.hashSync(password, 8);
             var user = {
                 "name": name,
@@ -80,17 +80,19 @@ function  signUpAdmin(name, mobile, password) {
                 isLeader: false,
                 isAdmin: true
             };
+            theUser = user
+            theUser.password = undefined
             return db.post("users", user)
         })
         .then(function (result) {
-            result["id"] = dbUtils.getIdAfterPost(result)
-            theUser = result
+            theUser["id"] = dbUtils.getIdAfterPost(result)
         })
-        .then(function(token) {
+        .then(function (token) {
             theUser["access_taken"] = token
             signedUpUser.resolve(theUser)
         })
         .fail(function (err) {
+            console.log("insta fail")
             signedUpUser.reject(err)
         })
     return signedUpUser
@@ -110,10 +112,13 @@ function signUpLeader(name, mobile) {
     };
     db.post("users", user)
         .then(function (result) {
-            result["id"] = dbUtils.getIdAfterPost(result)
-            newLeader.resolve(result)
+            user["id"] = dbUtils.getIdAfterPost(result)
+            console.log(user)
+            //user["id"] = dbUtils.getIdAfterPost(result)
+            newLeader.resolve(user)
         })
         .fail(function (err) {
+            console.log("post user failed")
             newLeader.reject(err)
         })
     return newLeader
@@ -132,17 +137,35 @@ function getLeaderByMobile(mobile) {
 function getUserByPhoneNumber(mobile) {
     return db.newSearchBuilder()
         .collection('users')
-        .query('mobile:`' + mobile + '`')
+        .query('value.mobile:`' + mobile + '`')
+}
+
+function getLeaderByPhoneNumber(mobile) {
+    return db.newSearchBuilder()
+        .collection('users')
+        .query('value.mobile:`' + mobile + '` AND value.isAdmin:`false`')
 }
 
 function checkIfNewUser(mobile) {
-    return getUserByPhoneNumber
+    console.log("ya")
+    var newUser = kew.defer()
+    getUserByPhoneNumber(mobile)
         .then(function (result) {
-            if (result.body.total_count === 0)
-                return kew.reject(new Error("User with that mobile number already exists"))
-            else
-                return kew.resolve("")
+            console.log("the result")
+            if (result.body.total_count === 0) {
+                console.log("no ways")
+                newUser.resolve("")
+            } else {
+                console.log("yes ways")
+                newUser.reject("The user already exists")
+            }
         })
+        .fail(function (err) {
+            console.log("how")
+            console.log(err)
+            newUser.reject(err)
+        })
+    return newUser
 }
 
 function createAuthToken(userId) {
@@ -152,12 +175,15 @@ function createAuthToken(userId) {
         "user": userId
     })
         .then(function (r) {
-            return dbUtils.createGraphRelationPromise('tokens', accessToken, 'users', 'hasUser')
+            console.log("ya1")
+            return dbUtils.createGraphRelationPromise('tokens', accessToken, 'users', userId, 'hasUser')
         })
         .then(function (r) {
+            console.log("ya2")
             returnToken.resolve(accessToken)
         })
         .fail(function (err) {
+            console.log("failed here")
             returnToken.reject(err)
         })
     return returnToken

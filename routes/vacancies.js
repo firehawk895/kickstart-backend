@@ -38,3 +38,15 @@ router.post('/', function (req, res, next) {
             customUtils.sendErrors(err, 422, res)
         })
 })
+
+router.get('/', function(req, res){
+    //get all vacancies
+    //primary sort location
+    //secondary sort time
+    //params:
+    //age, education, trade, lat, long, radius
+    //sorted in increasing order of distance
+    //id= will give 1 vacancies details
+})
+
+module.exports = router

@@ -20,6 +20,4 @@ router.post('/signup', function (req, res, next) {
         })
 })
 
-router.get('/leader/jobseekers')
-
 module.exports = router

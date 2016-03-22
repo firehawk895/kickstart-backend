@@ -93,7 +93,17 @@ passport.use(new BearerStrategy({},
 //app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'jade');
 //app.use('/public', express.static(path.join(__dirname, 'public')));
-//app.use('/user', user);
+var users = require('./routes/users')
+var jobseekers = require('./routes/jobseekers')
+var leaders = require('./routes/leaders')
+var interviews = require('./routes/interviews')
+var vacancies = require('./routes/vacancies')
+
+app.use('/users', users);
+app.use('/jobseekers', jobseekers);
+app.use('/leaders', leaders);
+app.use('/interviews', interviews);
+app.use('/vacancies', vacancies);
 
 app.all('/ping', function (req, res) {
     res.send('Pong')

@@ -1,7 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var UserAuthModel = require('../models/UserAuth');
+var LeaderModel = require('../models/Leader');
 var customUtils = require('../utils')
+var passport = require('passport')
 
 router.post('/login', function (req, res) {
     //return the user data
@@ -24,6 +26,20 @@ router.post('/login', function (req, res) {
         })
 })
 
-router.get('/jobseekers', function(req, res) {
+//moved to jobseeker API
+//router.get('/jobseekers', [passport.authenticate('bearer', {session: false}), function (req, res) {
+//    var leaderId = req.user.results[0].value.id;
+//
+//
+//    LeaderModel.getLeadersJobseekers(leaderId)
+//        .then(function (response) {
+//            res.send({
+//                data: response
+//            })
+//        })
+//        .fail(function (err) {
+//            customUtils.sendErrors(err, 422, res)
+//        })
+//}])
 
-})
+module.exports = router

@@ -3,6 +3,8 @@ var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var kew = require('kew');
+var msg91 = require("msg91")(config.msg91.authkey, config.msg91.senderId, config.msg91.routeNumber);
+var crypto = require('crypto');
 
 /**
  * calculate direct distance between two coordinates

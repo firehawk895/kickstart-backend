@@ -159,7 +159,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer.any(
             gender: req.body.gender,
             hasSelectedTrades: false,
             dateOfBirth: parseInt(req.body.dateOfBirth),
-            trades: [],
+            trades: {},
             comments: "",
             leaderId: leaderId, //denormalized for easy search, but graph relationships included
             image: theImageInS3

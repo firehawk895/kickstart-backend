@@ -57,7 +57,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
 //patch an interview (change status), any other additional details such as joining date
 //update the status and additional details of an interview
 router.patch('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
-    var interviewId = req.body.interviewId
+    var interviewId = req.body.id
     var interviewPayload = {
         //vacancyId: req.body.vacancyId,
         //jobseekerId: req.body.jobseekerId,

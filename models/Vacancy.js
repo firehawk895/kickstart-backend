@@ -53,7 +53,7 @@ function createEducationQuery(educationLevel) {
         "graduate and above": 6
     }
      */
-    return "value.educationLevel:[1 TO " + educationLevel+ "]"
+    return "value.educationLevel:[1 TO " + educationLevel + "]"
 }
 
 function createTradeQuery(trade) {
@@ -62,7 +62,7 @@ function createTradeQuery(trade) {
 
 module.exports = {
     create: create,
-    createAgeQuery : createAgeQuery,
-    createEducationQuery : createEducationQuery,
-    createTradeQuery : createTradeQuery
+    createAgeQuery: createAgeQuery,
+    createEducationQuery: createEducationQuery,
+    createTradeQuery: createTradeQuery
 }

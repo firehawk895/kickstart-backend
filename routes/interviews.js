@@ -23,6 +23,9 @@ var passport = require('passport');
  *      leader -----> jobseekers ---> interviews
  *      with a double hop, all the interviews can be accessed
  *      Integrity can be easily maintained by allowing the graph relations to be created first
+ *
+ * perhaps the 3rd (maybe the typical mongo way) -- that does not maintain integrity
+ * store the vacancyId, jobseekerId and inject/join data into it.
  */
 
 //schedule an interview
@@ -77,6 +80,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
 
 //get all interviews of candidates of a leader, filter with status
 router.get('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
+    console.log("here atleast?")
     var leaderId = req.user.results[0].path.key;
     var promises = []
     //var userId = req.user.results[0].value.id
@@ -118,10 +122,18 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         promises.push(distanceLessQuery)
     }
 
+    console.log("prmomises")
+    console.log(promises)
+
     kew.all(promises)
         .then(function (results) {
-            responseObj["total_count"] = results[0].body.total_count
-            responseObj["data"] = dbUtils.injectId(results[0])
+            console.log("ok this")
+            return InterviewModel.injectVacancyAndJobseeker(results[0])
+        })
+        .then(function(injectedInterviews) {
+            console.log("not quite here")
+            responseObj["total_count"] = injectedInterviews.body.total_count
+            responseObj["data"] = dbUtils.injectId(injectedInterviews)
             res.status(200)
             res.json(responseObj)
         })

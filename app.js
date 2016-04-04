@@ -100,12 +100,14 @@ var jobseekers = require('./routes/jobseekers')
 var leaders = require('./routes/leaders')
 var interviews = require('./routes/interviews')
 var vacancies = require('./routes/vacancies')
+var trades = require('./routes/trades')
 
 app.use('/users', users);
 app.use('/jobseekers', jobseekers);
 app.use('/leaders', leaders);
 app.use('/interviews', interviews);
 app.use('/vacancies', vacancies);
+app.use('/trades', trades);
 
 app.all('/ping', function (req, res) {
     res.send('Pong')

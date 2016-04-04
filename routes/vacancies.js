@@ -23,6 +23,8 @@ router.post('/', function (req, res, next) {
         salary_max : parseInt(req.body.salary_max),
         food_accommodation : req.body.food_accommodation,
         educationLevel : parseInt(req.body.educationLevel),
+        pf: req.body.pf,
+        esi: req.body.esi,
         guarantee_time : req.body.guarantee_time, //right now in days
         comments : req.body.comments,
         age_min : parseInt(req.body.age_min),

@@ -1,4 +1,3 @@
-var express = require('express');
 var dbUtils = require('../dbUtils')
 var constants = require('../constants')
 
@@ -7,6 +6,7 @@ var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var kew = require('kew');
+var customUtils = require('../utils')
 
 function create(interviewPayload) {
     var theInterviewPromise = kew.defer()
@@ -50,8 +50,49 @@ function getLeadersInterviews(leaderId) {
     return leadersInterviewsPromise
 }
 
+function extractIds(results) {
+    var vacancyIds = []
+    var jobseekerIds = []
+
+    results.body.results.forEach(function (item) {
+        vacancyIds.push(item.value.vacancyId)
+        jobseekerIds.push(item.value.jobseekerId)
+    })
+
+    return {
+        vacancyIds: vacancyIds,
+        jobseekerIds: jobseekerIds
+    }
+}
+
+function injectVacancyAndJobseeker(interviewResults) {
+    var injectedInterviews = kew.defer()
+    var idLists = extractIds(interviewResults)
+
+    kew.all([
+        dbUtils.getAllResultsFromList("vacancies", idLists.vacancyIds),
+        dbUtils.getAllResultsFromList("jobseekers", idLists.jobseekerIds)
+    ])
+        .then(function (results) {
+            var vacancyMap = customUtils.createHashMap(results[0])
+            var jobseekerMap = customUtils.createHashMap(results[1])
+            interviewResults.body.results = interviewResults.body.results.map(function (anItem) {
+                anItem.value["vacancy"] = vacancyMap[anItem.value.vacancyId]
+                anItem.value["jobseeker"] = jobseekerMap[anItem.value.jobseekerId]
+                return anItem
+            })
+            console.log(interviewResults.body.results)
+            injectedInterviews.resolve(interviewResults)
+        })
+        .fail(function (err) {
+            injectedInterviews.reject(err)
+        })
+    return injectedInterviews
+}
+
 module.exports = {
     create: create,
     edit: edit,
-    getLeadersInterviews : getLeadersInterviews
+    getLeadersInterviews: getLeadersInterviews,
+    injectVacancyAndJobseeker: injectVacancyAndJobseeker
 }

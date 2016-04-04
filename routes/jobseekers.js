@@ -12,44 +12,44 @@ oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var kew = require('kew');
 
-router.post('/', [passport.authenticate('bearer', {session: false}),function (req, res, next) {
+router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
     var leaderId = req.user.results[0].path.key;
 
     var jobSeekerPayload = {
-        name : req.body.name,
-        mobile : req.body.mobile,
-        educationLevel : parseInt(req.body.educationLevel),
-        workEx : parseInt(req.body.workEx),
-        mobileVerified : false,
-        interview_count : 0,
-        location_name : req.body.location_name,
-        location : {
-            lat : parseFloat(req.body.lat),
-            long : parseFloat(req.body.long)
+        name: req.body.name,
+        mobile: req.body.mobile,
+        educationLevel: parseInt(req.body.educationLevel),
+        mobileVerified: false,
+        interview_count: 0,
+        location_name: req.body.location_name,
+        location: {
+            lat: parseFloat(req.body.lat),
+            long: parseFloat(req.body.long)
         },
-        gender : req.body.gender,
-        dateOfBirth : parseInt(req.body.dateOfBirth),
-        preferredTrades : req.body.preferredTrades,
-        otherTrade : req.body.otherTrade,
-        leaderId : leaderId //denormalized for easy search, but graph relationships included
+        gender: req.body.gender,
+        hasSelectedTrades: false,
+        dateOfBirth: parseInt(req.body.dateOfBirth),
+        trades: [],
+        comments: "",
+        leaderId: leaderId //denormalized for easy search, but graph relationships included
     }
 
     console.log("leader id " + leaderId)
     console.log(jobSeekerPayload)
 
     JobseekerModel.create(leaderId, jobSeekerPayload)
-        .then(function(response) {
+        .then(function (response) {
             res.send({
                 data: response
             })
             res.status(200)
         })
-        .fail(function(err) {
+        .fail(function (err) {
             customUtils.sendErrors(err, 422, res)
         })
 }])
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     /**
      * Note the leaderId is stored in this collection denormalized,
      * however graph relations have been made as well to support
@@ -74,7 +74,7 @@ router.get('/', function(req, res) {
 
     queries.push("@path.kind:item")
 
-    if(req.query.leaderId) {
+    if (req.query.leaderId) {
         console.log("leader's jobseer query")
         queries.push(dbUtils.createFieldQuery("leaderId", req.query.leaderId))
     }
@@ -90,19 +90,19 @@ router.get('/', function(req, res) {
         isDistanceQuery = true;
     }
 
-    if(req.query.age) {
+    if (req.query.age) {
         console.log("we have an age query")
         var ageQuery = VacancyModel.createAgeQuery(req.query.age)
         console.log(ageQuery)
         queries.push(ageQuery)
     }
 
-    if(req.query.educationLevel) {
+    if (req.query.educationLevel) {
         console.log("minimum education query")
         queries.push(VacancyModel.createEducationQuery(req.query.educationLevel))
     }
 
-    if(req.query.trade) {
+    if (req.query.trade) {
         console.log("trade query")
         queries.push(VacancyModel.createTradeQuery(req.query.trade))
     }
@@ -111,7 +111,7 @@ router.get('/', function(req, res) {
     console.log("final query")
     console.log(theFinalQuery)
 
-    if(isDistanceQuery) {
+    if (isDistanceQuery) {
         var distanceQuery = db.newSearchBuilder()
             .collection("jobseekers")
             .limit(limit)
@@ -134,7 +134,7 @@ router.get('/', function(req, res) {
     }
 
     kew.all(promises)
-        .then(function(results) {
+        .then(function (results) {
             if (distanceQuery) {
                 results[0] = customUtils.insertDistance(results[0], req.query.lat, req.query.long)
             }
@@ -147,5 +147,32 @@ router.get('/', function(req, res) {
             customUtils.sendErrors([err.body.message], 503, res)
         })
 })
+
+router.post('/trades', [passport.authenticate('bearer', {session: false}), function (req, res) {
+    var responseObj = {}
+    var userId = req.user.results[0].value.id;
+    var jobseekerId = req.query.id;
+
+    //The great hack to not use json as input
+    var comments = req.body.comments
+    req.body.others = undefined
+
+    console.log("updating trades")
+    db.merge("jobseekers", jobseekerId, {
+        trades: req.body,
+        hasSelectedTrades: true,
+        comments: comments
+        //sportsList: Object.keys(req.body)
+    })
+        .then(function (result) {
+            responseObj["data"] = [];
+            responseObj["msg"] = "Trades Updated";
+            res.status(201);
+            res.json(responseObj);
+        })
+        .fail(function (err) {
+            customUtils.sendErrors([err.body.message], 422, res)
+        })
+}])
 
 module.exports = router

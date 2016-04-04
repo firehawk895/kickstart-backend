@@ -5,6 +5,8 @@ var db = oio(config.db.key);
 var kew = require('kew');
 var msg91 = require("msg91")(config.msg91.authkey, config.msg91.senderId, config.msg91.routeNumber);
 var crypto = require('crypto');
+var date = new Date()
+var dbUtils = require('./dbUtils')
 
 /**
  * calculate direct distance between two coordinates
@@ -93,9 +95,19 @@ var insertDistance = function (results, usersLat, usersLong) {
     return results
 }
 
+var createHashMap = function(results) {
+    var injectedResults = dbUtils.injectId(results)
+    var theMap = {}
+    injectedResults.forEach(function(result) {
+        theMap[result.id] = result
+    })
+    return theMap
+}
+
 module.exports = {
     insertDistance : insertDistance,
     sendErrors : sendErrors,
     sendSms : sendSms,
-    generateToken : generateToken
+    generateToken : generateToken,
+    createHashMap : createHashMap
 }

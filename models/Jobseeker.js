@@ -8,7 +8,6 @@ var kew = require('kew')
 
 function create(leaderId, jobseekerPayload) {
     var createdJobSeekerPromise = kew.defer()
-    var createdJobSeeker
     db.post("jobseekers", jobseekerPayload)
         .then(function (result) {
             console.log("hey yo")

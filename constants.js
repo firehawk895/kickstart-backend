@@ -5,10 +5,10 @@ module.exports = {
         },
         jobseekers: {
             myLeader: "myLeader",
-            interviews : "interviews"
+            interviews: "interviews"
         },
-        vacancies : {
-            hasJobSeekers : "hasJobSeekers"
+        vacancies: {
+            hasJobSeekers: "hasJobSeekers"
         }
     },
     //keyed with number so that
@@ -22,11 +22,10 @@ module.exports = {
         "graduate and above": 6
     },
     interviewStatus: {
-        scheduled : "scheduled",
-        appeared : "appeared",
-        failed : "failed",
-        cleared : "cleared",
-        joined : "joined",
-        monetized : "monetized"
+        scheduled: "scheduled",
+        appeared: "appeared",
+        cleared: "cleared",
+        joined: "joined",
+        monetized: "monetized"
     }
 }

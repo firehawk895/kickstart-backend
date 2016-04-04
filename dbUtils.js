@@ -2,6 +2,7 @@ var config = require('./config.js');
 var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
+var constants = require('./constants')
 
 /**
  * Orchestrate query wrappers ---------------------------------->
@@ -41,6 +42,23 @@ function queryJoiner(queries) {
         returnQuery += ") AND "
     })
     returnQuery = returnQuery.substring(0, returnQuery.length - 5)
+    return returnQuery
+}
+
+/**
+ * join a set of queries with AND, OR conditions
+ * for lucene/orchestrate
+ * @param queries
+ * @param type
+ */
+function queryJoinerOr(queries) {
+    var returnQuery = ""
+    queries.forEach(function (query) {
+        returnQuery += "("
+        returnQuery += query
+        returnQuery += ") OR "
+    })
+    returnQuery = returnQuery.substring(0, returnQuery.length - 4)
     return returnQuery
 }
 
@@ -148,6 +166,23 @@ function createGetOneOnOneGraphRelationQuery(sourceCollection, sourceId, relatio
     return query
 }
 
+function getAllResultsFromList(collection, idList) {
+    //how long can the largest lucene query to orchestrate be?
+    var queries = []
+
+    idList.forEach(function (id) {
+        queries.push(createSearchByIdQuery(id))
+    })
+    var finalQuery = queryJoinerOr(queries)
+    console.log("the final query ")
+    console.log(finalQuery)
+    return db.newSearchBuilder()
+        .collection(collection)
+        .limit(100)
+        //.offset(0)
+        .query(finalQuery)
+}
+
 module.exports = {
     injectId: injectId,
     createGetOneOnOneGraphRelationQuery: createGetOneOnOneGraphRelationQuery,
@@ -159,7 +194,9 @@ module.exports = {
     deleteGraphRelationPromise: deleteGraphRelationPromise,
     queryJoiner: queryJoiner,
     getIdAfterPost : getIdAfterPost,
-    createFieldQuery : createFieldQuery
+    createFieldQuery : createFieldQuery,
+    queryJoinerOr : queryJoinerOr,
+    getAllResultsFromList : getAllResultsFromList
 }
 
 

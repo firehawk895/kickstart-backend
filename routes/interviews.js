@@ -38,7 +38,8 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         vacancyId: req.body.vacancyId,
         jobseekerId: req.body.jobseekerId,
         interviewTime: req.body.interviewTime,
-        status: constants.interviewStatus.scheduled
+        status: constants.interviewStatus.scheduled,
+        leaderId: leaderId //check the get API, you will realize why we have kept this
     }
 
     InterviewModel.create(interviewPayload)
@@ -95,8 +96,12 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     var isLeaderQuery = false
 
     if (req.query.leaderId) {
-        isLeaderQuery = true
-        promises.push(InterviewModel.getLeadersInterviews(req.query.leaderId))
+        queries.push(dbUtils.createFieldQuery('leaderId', req.query.leaderId))
+        //cool stuff but not so cool stuff -->> promises.push(InterviewModel.getLeadersInterviews(req.query.leaderId))
+    }
+
+    if (req.query.monetized) {
+        queries.push(dbUtils.createFieldQuery('status', constants.interviewStatus.monetized))
     }
 
     if (req.query.vacancyId) {
@@ -113,25 +118,18 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
 
     var finalQuery = dbUtils.queryJoiner(queries)
 
-    if (!isLeaderQuery) {
-        var distanceLessQuery = db.newSearchBuilder()
-            .collection("interviews")
-            .limit(limit)
-            .offset(offset)
-            .query(finalQuery)
-        promises.push(distanceLessQuery)
-    }
-
-    console.log("prmomises")
-    console.log(promises)
+    var distanceLessQuery = db.newSearchBuilder()
+        .collection("interviews")
+        .limit(limit)
+        .offset(offset)
+        .query(finalQuery)
+    promises.push(distanceLessQuery)
 
     kew.all(promises)
         .then(function (results) {
-            console.log("ok this")
             return InterviewModel.injectVacancyAndJobseeker(results[0])
         })
-        .then(function(injectedInterviews) {
-            console.log("not quite here")
+        .then(function (injectedInterviews) {
             responseObj["total_count"] = injectedInterviews.body.total_count
             responseObj["data"] = dbUtils.injectId(injectedInterviews)
             res.status(200)

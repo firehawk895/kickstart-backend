@@ -34,6 +34,13 @@ function edit(interviewId, interviewPayload) {
     return db.merge("interviews", interviewId, interviewPayload)
 }
 
+/**
+ * this is cool and all, but does not allow flexibility
+ * what if I want the monetized interviews of the leader, either I need a filter of this result
+ * or make a good query
+ * @param leaderId
+ * @returns {!Promise}
+ */
 function getLeadersInterviews(leaderId) {
     var leadersInterviewsPromise = kew.defer()
     db.newGraphReader()
@@ -65,6 +72,12 @@ function extractIds(results) {
     }
 }
 
+/**
+ * injects the vacancy and jobseeker details in a normalized manner
+ * to the imnterview data
+ * @param interviewResults
+ * @returns {!Promise}
+ */
 function injectVacancyAndJobseeker(interviewResults) {
     var injectedInterviews = kew.defer()
     var idLists = extractIds(interviewResults)

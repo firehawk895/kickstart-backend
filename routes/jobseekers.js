@@ -3,6 +3,7 @@ var router = express.Router();
 var VacancyModel = require('../models/Vacancy');
 var JobseekerModel = require('../models/Jobseeker');
 var customUtils = require('../utils')
+var fs = require('fs')
 var dbUtils = require('../dbUtils')
 var passport = require('passport')
 
@@ -11,43 +12,8 @@ var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var kew = require('kew');
-
-router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
-    var leaderId = req.user.results[0].path.key;
-
-    var jobSeekerPayload = {
-        name: req.body.name,
-        mobile: req.body.mobile,
-        educationLevel: parseInt(req.body.educationLevel),
-        mobileVerified: false,
-        interview_count: 0,
-        location_name: req.body.location_name,
-        location: {
-            lat: parseFloat(req.body.lat),
-            long: parseFloat(req.body.long)
-        },
-        gender: req.body.gender,
-        hasSelectedTrades: false,
-        dateOfBirth: parseInt(req.body.dateOfBirth),
-        trades: [],
-        comments: "",
-        leaderId: leaderId //denormalized for easy search, but graph relationships included
-    }
-
-    console.log("leader id " + leaderId)
-    console.log(jobSeekerPayload)
-
-    JobseekerModel.create(leaderId, jobSeekerPayload)
-        .then(function (response) {
-            res.send({
-                data: response
-            })
-            res.status(200)
-        })
-        .fail(function (err) {
-            customUtils.sendErrors(err, 422, res)
-        })
-}])
+var theMulter = require('multer');
+var multer = theMulter()
 
 router.get('/', function (req, res) {
     /**
@@ -173,6 +139,46 @@ router.post('/trades', [passport.authenticate('bearer', {session: false}), funct
         .fail(function (err) {
             customUtils.sendErrors([err.body.message], 422, res)
         })
+}])
+
+router.post('/', [passport.authenticate('bearer', {session: false}), multer.any(), function (req, res) {
+    var leaderId = req.user.results[0].path.key;
+
+    customUtils.upload(req.files.avatar, function (theImageInS3) {
+        var jobSeekerPayload = {
+            name: req.body.name,
+            mobile: req.body.mobile,
+            educationLevel: parseInt(req.body.educationLevel),
+            mobileVerified: false,
+            interview_count: 0,
+            location_name: req.body.location_name,
+            location: {
+                lat: parseFloat(req.body.lat),
+                long: parseFloat(req.body.long)
+            },
+            gender: req.body.gender,
+            hasSelectedTrades: false,
+            dateOfBirth: parseInt(req.body.dateOfBirth),
+            trades: [],
+            comments: "",
+            leaderId: leaderId, //denormalized for easy search, but graph relationships included
+            image: theImageInS3
+        }
+
+        console.log("leader id " + leaderId)
+        console.log(jobSeekerPayload)
+
+        JobseekerModel.create(leaderId, jobSeekerPayload)
+            .then(function (response) {
+                res.send({
+                    data: response
+                })
+                res.status(200)
+            })
+            .fail(function (err) {
+                customUtils.sendErrors(err, 422, res)
+            })
+    })
 }])
 
 module.exports = router

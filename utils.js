@@ -7,7 +7,12 @@ var msg91 = require("msg91")(config.msg91.authkey, config.msg91.senderId, config
 var crypto = require('crypto');
 var date = new Date()
 var dbUtils = require('./dbUtils')
-
+var fs = require('fs'),
+    S3FS = require('s3fs'),
+    s3fsImpl = new S3FS(config.s3.bucket, {
+        accessKeyId: config.s3.access,
+        secretAccessKey: config.s3.secret
+    });
 /**
  * calculate direct distance between two coordinates
  * Note: we are using direct distance not motorable distance
@@ -104,10 +109,42 @@ var createHashMap = function(results) {
     return theMap
 }
 
+/**
+ * Uploads file to S3
+ * @param {file} file
+ * @param {function} callback
+ */
+function upload(file, callback) {
+    if (file != undefined) {
+        var stream = fs.createReadStream(file.path);
+        var randomString = generateToken(3)
+        var originalname = file.originalname.replace(/[^\w.]/g, '_')
+        var extension = originalname.match(/(\.[^.]+$)/)[0]
+        var fileNameOnly = originalname.replace(/(\.[^.]+$)/, '')
+        var filename = fileNameOnly + '_' + randomString + extension
+        var thumb_filename = fileNameOnly + '_' + randomString + '.png'
+        s3fsImpl.writeFile(filename, stream).then(function (data) {
+            fs.unlink(file.path, function (err) {
+                if (err) {
+                    callback(err);
+                }
+                var info = {
+                    url: "https://s3.amazonaws.com/" + config.s3.bucket + "/" + filename,
+                    urlThumb: "https://s3.amazonaws.com/" + config.s3.bucket + "resized/resized-" + thumb_filename
+                }
+                callback(info);
+            });
+        });
+    } else {
+        callback(undefined);
+    }
+}
+
 module.exports = {
     insertDistance : insertDistance,
     sendErrors : sendErrors,
     sendSms : sendSms,
     generateToken : generateToken,
-    createHashMap : createHashMap
+    createHashMap : createHashMap,
+    upload : upload
 }

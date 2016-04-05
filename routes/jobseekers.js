@@ -205,7 +205,6 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             image: theImageInS3
         }
 
-        console.log("leader id " + leaderId)
         console.log(jobSeekerPayload)
 
         db.merge("jobseekers", jobseekerId, jobSeekerPayload)

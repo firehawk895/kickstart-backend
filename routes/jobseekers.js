@@ -201,7 +201,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             dateOfBirth: parseInt(req.body.dateOfBirth),
             trades: {},
             comments: "",
-            leaderId: leaderId, //denormalized for easy search, but graph relationships included
+            //leaderId: leaderId, //denormalized for easy search, but graph relationships included
             image: theImageInS3
         }
 

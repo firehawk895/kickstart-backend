@@ -161,8 +161,8 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
             trades: {},
             comments: "",
             leaderId: leaderId, //denormalized for easy search, but graph relationships included
-            avatar: theImageInS3.url,
-            avatarThumb: theImageInS3.urlThumb
+            avatar: ((theImageInS3)?theImageInS3.url: ""),
+            avatarThumb: ((theImageInS3)?theImageInS3.urlThumb: "")
         }
 
         console.log("leader id " + leaderId)

@@ -45,10 +45,10 @@ router.get('/', function (req, res) {
         queries.push(dbUtils.createFieldQuery("leaderId", req.query.leaderId))
     }
 
-    if (req.query.id) {
-        console.log("we have a specific vacancyId query")
-        queries.push(dbUtils.createSearchByIdQuery(req.query.id))
-    }
+    //if (req.query.id) {
+    //    console.log("we have a specific vacancyId query")
+    //    queries.push(dbUtils.createSearchByIdQuery(req.query.id))
+    //}
 
     if (req.query.lat && req.query.long && req.query.radius) {
         console.log("we have a distance query")
@@ -162,7 +162,8 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer.any(
             trades: {},
             comments: "",
             leaderId: leaderId, //denormalized for easy search, but graph relationships included
-            image: theImageInS3
+            avatar: theImageInS3.url,
+            avatarThumb: theImageInS3.urlThumb
         }
 
         console.log("leader id " + leaderId)
@@ -179,6 +180,47 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer.any(
                 customUtils.sendErrors(err, 422, res)
             })
     })
+}])
+
+router.patch('/', [passport.authenticate('bearer', {session: false}), multer.any(), function (req, res) {
+    var jobseekerId = req.query.id
+
+    customUtils.upload(req.files.avatar, function (theImageInS3) {
+        var jobSeekerPayload = {
+            name: req.body.name,
+            mobile: req.body.mobile,
+            educationLevel: parseInt(req.body.educationLevel),
+            mobileVerified: false,
+            interview_count: 0,
+            location_name: req.body.location_name,
+            location: {
+                lat: parseFloat(req.body.lat),
+                long: parseFloat(req.body.long)
+            },
+            gender: req.body.gender,
+            hasSelectedTrades: false,
+            dateOfBirth: parseInt(req.body.dateOfBirth),
+            trades: {},
+            comments: "",
+            leaderId: leaderId, //denormalized for easy search, but graph relationships included
+            image: theImageInS3
+        }
+
+        console.log("leader id " + leaderId)
+        console.log(jobSeekerPayload)
+
+        db.merge("jobseekers", jobseekerId, jobSeekerPayload)
+            .then(function (response) {
+                res.send({
+                    data: response
+                })
+                res.status(200)
+            })
+            .fail(function (err) {
+                customUtils.sendErrors(err, 422, res)
+            })
+    })
+
 }])
 
 module.exports = router

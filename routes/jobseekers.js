@@ -197,7 +197,6 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
                 long: parseFloat(req.body.long)
             },
             gender: req.body.gender,
-            hasSelectedTrades: false,
             dateOfBirth: parseInt(req.body.dateOfBirth),
             trades: {},
             comments: "",

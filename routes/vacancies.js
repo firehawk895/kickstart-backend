@@ -9,6 +9,8 @@ var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var kew = require('kew');
+var eventSystem = require('../listeners/listeners')
+var constants = require('../constants')
 
 router.post('/', function (req, res, next) {
     var interviewDatesArray = req.body.interview_dates.map(function(date) {
@@ -47,6 +49,7 @@ router.post('/', function (req, res, next) {
                 data: vacancyPayload
             })
             res.status(200)
+            eventSystem.dispatch(constants.events.newVacancy, vacancyPayload)
         })
         .fail(function(err) {
             customUtils.sendErrors(err, 422, res)

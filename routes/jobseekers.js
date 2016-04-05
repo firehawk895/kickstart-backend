@@ -12,8 +12,7 @@ var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var kew = require('kew');
-var theMulter = require('multer');
-var multer = theMulter()
+var multer = require('multer');
 
 router.get('/', function (req, res) {
     /**
@@ -141,10 +140,10 @@ router.post('/trades', [passport.authenticate('bearer', {session: false}), funct
         })
 }])
 
-router.post('/', [passport.authenticate('bearer', {session: false}), multer.any(), function (req, res) {
+router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var leaderId = req.user.results[0].path.key;
-
     customUtils.upload(req.files.avatar, function (theImageInS3) {
+        console.log(theImageInS3)
         var jobSeekerPayload = {
             name: req.body.name,
             mobile: req.body.mobile,
@@ -182,7 +181,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer.any(
     })
 }])
 
-router.patch('/', [passport.authenticate('bearer', {session: false}), multer.any(), function (req, res) {
+router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var jobseekerId = req.query.id
 
     customUtils.upload(req.files.avatar, function (theImageInS3) {

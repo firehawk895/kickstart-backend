@@ -183,6 +183,70 @@ function getAllResultsFromList(collection, idList) {
         .query(finalQuery)
 }
 
+/**
+ * this returns an array of promises that allows to retrieve an entire
+ * dump of the database collection - again non graph relations
+ * @param collection
+ * @returns {!Promise}
+ */
+function allItemsPromisesList(collection, query) {
+    var promiseList = kew.defer()
+    var promiseListArray = []
+    var offset = 0
+    db.newSearchBuilder()
+        .collection(collection)
+        .limit(100)
+        .offset(offset)
+        .query(query)
+        .then(function (results) {
+            var totalCount = results.body.total_count
+            var remaining = 0
+            do {
+                promiseListArray.push(
+                    db.newSearchBuilder()
+                        .collection(collection)
+                        .limit(100)
+                        .offset(offset)
+                        .query(query)
+                )
+                offset += 100
+                remaining = totalCount - offset;
+            } while (remaining > 0)
+            promiseList.resolve(promiseListArray)
+        })
+        .fail(function (err) {
+            promiseList.reject(err)
+        })
+    return promiseList
+}
+
+/**
+ * this returns all the items in a database collection
+ * asynchronously - non graph queries
+ * @param collection
+ * @returns {!Promise}
+ */
+function getAllItems(collection, query) {
+    var allItems = kew.defer()
+    allItemsPromisesList(collection, query)
+        .then(function (promiseList) {
+            return kew.all(promiseList)
+        })
+        .then(function (promiseResults) {
+            var allItemsList = []
+            promiseResults.forEach(function (item) {
+                console.log(item.body.results[0].path.destination)
+                var injectedItems = injectId(item)
+                allItemsList = allItemsList.concat(injectedItems)
+            })
+            allItems.resolve(allItemsList)
+        })
+        .fail(function (err) {
+            allItems.reject(err)
+        })
+    return allItems
+}
+
 module.exports = {
     injectId: injectId,
     createGetOneOnOneGraphRelationQuery: createGetOneOnOneGraphRelationQuery,
@@ -193,10 +257,11 @@ module.exports = {
     createDistanceQuery: createDistanceQuery,
     deleteGraphRelationPromise: deleteGraphRelationPromise,
     queryJoiner: queryJoiner,
-    getIdAfterPost : getIdAfterPost,
-    createFieldQuery : createFieldQuery,
-    queryJoinerOr : queryJoinerOr,
-    getAllResultsFromList : getAllResultsFromList
+    getIdAfterPost: getIdAfterPost,
+    createFieldQuery: createFieldQuery,
+    queryJoinerOr: queryJoinerOr,
+    getAllResultsFromList: getAllResultsFromList,
+    getAllItems : getAllItems
 }
 
 

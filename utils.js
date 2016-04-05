@@ -115,6 +115,7 @@ var createHashMap = function(results) {
  * @param {function} callback
  */
 function upload(file, callback) {
+    console.log(file)
     if (file != undefined) {
         var stream = fs.createReadStream(file.path);
         var randomString = generateToken(3)

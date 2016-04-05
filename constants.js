@@ -27,5 +27,19 @@ module.exports = {
         cleared: "cleared",
         joined: "joined",
         monetized: "monetized"
+    },
+    notifications: {
+        type: {
+            inApp: "app",
+            push: "push",
+            both: "both",
+            path: "/notifications"
+        },
+        redirect: {
+            vacancies: "vacancies"
+        }
+    },
+    events: {
+        newVacancy: "newVacancy"
     }
 }

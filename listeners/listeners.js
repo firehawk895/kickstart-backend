@@ -27,6 +27,7 @@ var dispatch = function (type, data) {
 }
 
 var dispatchNewVacancy = function (data) {
+    console.log("hello")
     var nofObj = clone(commonNofObj)
     nofObj["title"] = "Naya Vacancy!"
     nofObj["redirect"] = constants.notifications.redirect.vacancies

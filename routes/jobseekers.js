@@ -44,10 +44,10 @@ router.get('/', function (req, res) {
         queries.push(dbUtils.createFieldQuery("leaderId", req.query.leaderId))
     }
 
-    //if (req.query.id) {
-    //    console.log("we have a specific vacancyId query")
-    //    queries.push(dbUtils.createSearchByIdQuery(req.query.id))
-    //}
+    if (req.query.id) {
+        console.log("we have a specific vacancyId query")
+        queries.push(dbUtils.createSearchByIdQuery(req.query.id))
+    }
 
     if (req.query.lat && req.query.long && req.query.radius) {
         console.log("we have a distance query")

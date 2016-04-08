@@ -6,8 +6,10 @@ var request = require('request');
 
 var multer = require('multer');
 
+// var Notifications = require('../notifications');
+// var notify = new Notifications();
+
 var config = require('../config.js');
-var customUtils = require('../utils.js');
 
 var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
@@ -19,6 +21,8 @@ var Firebase = require("firebase");
 var feedbackRefUrl = config.firebase.url + "/FeedbackUpdated"
 
 var userRef = new Firebase(feedbackRefUrl, config.firebase.secret);
+
+var EventSystem = require('../notifications/dispatchers');
 
 /**
  * Register a listener for a user
@@ -37,10 +41,11 @@ userRef.on("child_added", function (snapshot) {
          * */
         if (messageObj.timestamp > (now - 60)) {
             /**
-             * The Message from Pyoopil, or the slack channel
+             * The Message from Kickstart, or the slack channel
              * should not be resent back to the channel
              * */
-            if (messageObj.displayName != "Pyoopil") {
+            if (messageObj.displayName != "Kickstart") {
+                console.log("time to post")
                 request.post(config.newSlack.feedbackHook, {
                     body: JSON.stringify({text: "*$" + username + " : " + messageObj.text + "*"})
                 })
@@ -50,7 +55,6 @@ userRef.on("child_added", function (snapshot) {
 })
 
 router.post('/', multer(), function (req, res) {
-
     var messageFromSlack = req.body.text
     console.log(messageFromSlack)
     var alreadyPostedInSlack = messageFromSlack.match(/^\*/);
@@ -59,8 +63,6 @@ router.post('/', multer(), function (req, res) {
     if (!alreadyPostedInSlack) {
         console.log("accepted")
         var dollarMatcher = messageFromSlack.match(/\$([a-zA-Z0-9_-]+)\:(.*)/);
-        //var everyone = messageFromSlack.match(/\$Everyone\:(.*)/);
-        //var classroom = messageFromSlack.match(/\$Path-([A-Za-z0-9]+)\:(.*)/);
 
         if (dollarMatcher) {
             console.log("matched -- ready to fire")
@@ -74,24 +76,49 @@ router.post('/', multer(), function (req, res) {
             var date = new Date()
             var time = date.getTime()
             var messageObj = {
-                displayName: "Pyoopil",
+                displayName: "Kickstart",
                 text: dollarMatcher[2],
                 timestamp: time
             }
 
             thisUsersRef.push().set(messageObj, function (error) {
-                var notifObj = {
-                    "username": dollarMatcher[1],
-                    "text": dollarMatcher[2],
-                    "type": "singleUser"
-                };
-                notify.emit('feedbackResponse', notifObj);
+                EventSystem.feedback(username, messageFromSlack)
+                // var notifObj = {
+                //     "username": dollarMatcher[1],
+                //     "text": dollarMatcher[2],
+                //     "type": "singleUser"
+                // };
+                // notify.emit('feedbackResponse', notifObj);
             })
             res.json({"status": "ok"});
-        } else if (msg != "Come on! Who will do the mention? Stupid.") {
+        }
+        else if (msg != "Come on! Who will do the mention? Stupid.") {
             res.json({"text": "Baklol ho ka. mention karo!"});
         } else {
             res.json({"status": "ok"});
         }
     }
 })
+
+//slack url working
+// router.post('/test', multer(), function (req, res) {
+//     console.log("slack hook")
+//     request.post(config.newSlack.feedbackHook, {
+//         body: JSON.stringify({text: "test slack hook"})
+//     })
+// })
+
+//firebase to slack test working
+// router.post('/test', function (req, res) {
+//     console.log("what")
+//     myFirebaseRef = new Firebase(config.firebase.url + "/FeedbackUpdated/7b9e93742e133d97", config.firebase.secret);
+//     var newPostRef = myFirebaseRef.push();
+//     var now = new Date().getTime()
+//     newPostRef.set({
+//         displayName: "Batman",
+//         text: "Announcing COBOL, a New Programming Language",
+//         timestamp: now
+//     });
+// })
+
+module.exports = router;

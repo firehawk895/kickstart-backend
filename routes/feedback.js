@@ -22,7 +22,7 @@ var feedbackRefUrl = config.firebase.url + "/FeedbackUpdated"
 
 var userRef = new Firebase(feedbackRefUrl, config.firebase.secret);
 
-var EventSystem = require('../notifications/dispatchers');
+// var EventSystem = require('../notifications/dispatchers');
 
 /**
  * Register a listener for a user

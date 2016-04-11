@@ -101,12 +101,12 @@ router.post('/', function (req, res) {
 })
 
 //slack url working
-// router.post('/test', multer(), function (req, res) {
-//     console.log("slack hook")
-//     request.post(config.newSlack.feedbackHook, {
-//         body: JSON.stringify({text: "test slack hook"})
-//     })
-// })
+router.get('/test', multer(), function (req, res) {
+    console.log("slack hook")
+    request.post(config.newSlack.feedbackHook, {
+        body: JSON.stringify({text: "test slack hook"})
+    })
+})
 
 //firebase to slack test working
 // router.post('/test', function (req, res) {

@@ -3,6 +3,7 @@ var oio = require('orchestrate');
 oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var constants = require('./constants')
+var kew = require('kew')
 
 /**
  * Orchestrate query wrappers ---------------------------------->
@@ -190,6 +191,7 @@ function getAllResultsFromList(collection, idList) {
  * @returns {!Promise}
  */
 function allItemsPromisesList(collection, query) {
+    console.log("inside allItemsPromisesList")
     var promiseList = kew.defer()
     var promiseListArray = []
     var offset = 0
@@ -199,6 +201,8 @@ function allItemsPromisesList(collection, query) {
         .offset(offset)
         .query(query)
         .then(function (results) {
+            console.log("this many results")
+            console.log(results.body.total_count)
             var totalCount = results.body.total_count
             var remaining = 0
             do {
@@ -227,15 +231,18 @@ function allItemsPromisesList(collection, query) {
  * @returns {!Promise}
  */
 function getAllItems(collection, query) {
+    console.log("anybody home")
     var allItems = kew.defer()
+    console.log("Im home!")
     allItemsPromisesList(collection, query)
         .then(function (promiseList) {
             return kew.all(promiseList)
         })
         .then(function (promiseResults) {
+            console.log("ok")
             var allItemsList = []
             promiseResults.forEach(function (item) {
-                console.log(item.body.results[0].path.destination)
+                // console.log(item.body.results[0].path.destination)
                 var injectedItems = injectId(item)
                 allItemsList = allItemsList.concat(injectedItems)
             })
@@ -261,7 +268,7 @@ module.exports = {
     createFieldQuery: createFieldQuery,
     queryJoinerOr: queryJoinerOr,
     getAllResultsFromList: getAllResultsFromList,
-    getAllItems : getAllItems
+    getAllItems: getAllItems
 }
 
 

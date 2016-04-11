@@ -19,6 +19,7 @@ var commonNofObj = {
 var dispatch = function (type, data) {
     switch (type) {
         case constants.events.newVacancy:
+            console.log("dispatching vacancy push")
             dispatchNewVacancy(data)
             break;
         default:
@@ -31,7 +32,7 @@ var dispatchNewVacancy = function (data) {
     var nofObj = clone(commonNofObj)
     nofObj["title"] = "Naya Vacancy!"
     nofObj["redirect"] = constants.notifications.redirect.vacancies
-    nofObj["text"] = "A new vacancy has been added! Dekho Dekho!"
+    nofObj["text"] = "A new vacancy of " + data.trade + " for " + data.company + " has been added."
     nofObj["id"] = data.id
     nofObj["created"] = date.getTime()
     //basically means all users
@@ -43,6 +44,10 @@ var dispatchNewVacancy = function (data) {
             var inAppIds = results.map(function (result) {
                 return result.id
             })
+            console.log("the gcm ids")
+            console.log(gcmIds)
+            console.log("the inApp ids")
+            console.log(inAppIds)
             notificationFactory.send(nofObj, constants.notifications.type.both, gcmIds, inAppIds)
         })
         .fail(function (err) {

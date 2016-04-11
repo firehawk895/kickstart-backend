@@ -208,14 +208,15 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             image: theImageInS3
         }
         
-        db.newPatchBuilder()
-
         console.log(jobSeekerPayload)
 
         db.merge("jobseekers", jobseekerId, jobSeekerPayload)
             .then(function (response) {
+                return db.get("jobseekers", jobseekerId)
+            })
+            .then(function (jobseeker) {
                 res.send({
-                    data: response
+                    data: jobseeker
                 })
                 res.status(200)
             })

@@ -43,15 +43,23 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         leaderId: leaderId //check the get API, you will realize why we have kept this
     }
 
-    InterviewModel.create(interviewPayload)
-        .then(function (response) {
+    kew.all([db.get('vacancies', interviewPayload.vacancyId), db.get('jobseekers', interviewPayload.jobseekerId)])
+        .then(function (results) {
+            return InterviewModel.create(interviewPayload)
+        })
+        .then((function (response) {
             res.send({
                 data: response
             })
             res.status(200)
-        })
+        }))
         .fail(function (err) {
-            customUtils.sendErrors(err, 422, res)
+            res.send(
+                {
+                    errors: ["Check the vacancy or jobseeker. They may be invalid"],
+                    errorObj: err
+                }
+            )
         })
 }])
 

@@ -61,7 +61,6 @@ function createTradeQuery(trade) {
 }
 
 
-
 module.exports = {
     create: create,
     createAgeQuery: createAgeQuery,

@@ -102,6 +102,7 @@ var interviews = require('./routes/interviews')
 var vacancies = require('./routes/vacancies')
 var feedback = require('./routes/feedback')
 var trades = require('./routes/trades')
+var search = require('./routes/search')
 
 app.use('/users', users);
 app.use('/jobseekers', jobseekers);
@@ -110,6 +111,7 @@ app.use('/interviews', interviews);
 app.use('/vacancies', vacancies);
 app.use('/trades', trades);
 app.use('/feedback', feedback);
+app.use('/search', search);
 
 app.all('/ping', function (req, res) {
     res.send('Pong')

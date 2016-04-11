@@ -107,6 +107,17 @@ function createFieldQuery(field, value) {
 }
 
 /**
+ * a little fuzzy with the query,
+ * search-- expecting sanitized value
+ * @param field
+ * @param value
+ * @returns {string}
+ */
+function createFuzzyQuery(field, value) {
+    return "value." + field + ":" + value + "*"
+}
+
+/**
  * Inserts the id into every response object
  * extracted from orchestrate's "path" key
  * @param results
@@ -268,7 +279,8 @@ module.exports = {
     createFieldQuery: createFieldQuery,
     queryJoinerOr: queryJoinerOr,
     getAllResultsFromList: getAllResultsFromList,
-    getAllItems: getAllItems
+    getAllItems: getAllItems,
+    createFuzzyQuery : createFuzzyQuery
 }
 
 

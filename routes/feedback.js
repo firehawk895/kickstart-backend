@@ -82,7 +82,7 @@ router.post('/', function (req, res) {
             }
 
             thisUsersRef.push().set(messageObj, function (error) {
-                EventSystem.feedback(username, messageFromSlack)
+                // EventSystem.feedback(username, messageFromSlack)
                 // var notifObj = {
                 //     "username": dollarMatcher[1],
                 //     "text": dollarMatcher[2],

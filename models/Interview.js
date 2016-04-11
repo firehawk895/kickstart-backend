@@ -8,6 +8,7 @@ var db = oio(config.db.key);
 var kew = require('kew');
 var customUtils = require('../utils')
 var JobseekerModel = require('../models/Jobseeker')
+var dateFormat = require('dateformat');
 
 function create(interviewPayload) {
     var theInterviewPromise = kew.defer()
@@ -24,7 +25,7 @@ function create(interviewPayload) {
         .then(function (results) {
             interviewPayload["id"] = dbUtils.getIdAfterPost(results)
             theInterviewPromise.resolve(interviewPayload)
-            kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)])
+            kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)], sendInterviewSms(interviewPayload.jobseekerId, interviewPayload.vacancyId, interviewPayload.interviewTime))
         })
         .fail(function (err) {
             theInterviewPromise.reject(err)
@@ -34,6 +35,29 @@ function create(interviewPayload) {
 
 function edit(interviewId, interviewPayload) {
     return db.merge("interviews", interviewId, interviewPayload)
+}
+
+function sendInterviewSms(jobseekerId, vacancyId, interviewTime) {
+    var smsStatus = kew.defer()
+    var message = ""
+    kew.all([db.get('vacancies', vacancyId), db.get('jobseekers', jobseekerId)])
+        .then(function(results) {
+            var vacancy = results[0]
+            var jobseeker = results[1]
+            message = "You have an interview at " + vacancy.location_name + " for " + vacancy.company + " at " + dateFormat(interviewTime, "dddd, mmmm dS, yyyy, h:MM:ss TT");
+            return sendSms(message, jobseeker.mobile)
+        })
+        .then(function(res) {
+            smsStatus.resolve("")
+            console.log(message)
+            console.log("interview sms sent")
+        })
+        .fail(function (err) {
+            smsStatus.reject(err)
+            console.log("interview sms failed")
+            console.log(err)
+        })
+    return smsStatus
 }
 
 /**

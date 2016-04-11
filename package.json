@@ -14,6 +14,7 @@
     "cors": "*",
     "cron": "*",
     "crypto": "*",
+    "dateformat": "^1.0.12",
     "debug": "*",
     "express": "*",
     "express-validator": "*",
@@ -27,14 +28,13 @@
     "msg91": "*",
     "msg91-sms": "*",
     "multer": "0.1.8",
-    "node-gcm": "*",
+    "node-gcm": "^0.9.15",
     "orchestrate": "*",
     "passport": "*",
     "passport-http-bearer": "*",
     "random-string": "*",
     "request": "*",
     "s3fs": "*",
-    "validator": "*",
-    "node-gcm": "^0.9.15"
+    "validator": "*"
   }
 }

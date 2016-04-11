@@ -120,7 +120,7 @@ router.post('/trades', [passport.authenticate('bearer', {session: false}), funct
 
     //The great hack to not use json as input
     var comments = req.body.comments
-    req.body.others = undefined
+    req.body.comments = undefined
 
     console.log("updating trades")
     db.merge("jobseekers", jobseekerId, {

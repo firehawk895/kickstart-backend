@@ -22,7 +22,7 @@ var send = function (obj, type, gcmIds, inappIds) {
         case constants.notifications.type.push:
             sendPush(obj, gcmIds)
             break;
-        case constants.notifications.type.app:
+        case constants.notifications.type.inApp:
             sendInApp(obj, inappIds)
             break;
         default:

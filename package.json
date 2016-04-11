@@ -26,7 +26,7 @@
     "morgan": "*",
     "msg91": "*",
     "msg91-sms": "*",
-    "multer": "^0.1.8",
+    "multer": "0.1.8",
     "node-gcm": "*",
     "orchestrate": "*",
     "passport": "*",
@@ -34,6 +34,7 @@
     "random-string": "*",
     "request": "*",
     "s3fs": "*",
-    "validator": "*"
+    "validator": "*",
+    "node-gcm": "^0.9.15"
   }
 }

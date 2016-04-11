@@ -29,11 +29,11 @@ module.exports = {
         monetized: "monetized"
     },
     notifications: {
+        path: "/notifications",
         type: {
             inApp: "app",
             push: "push",
             both: "both",
-            path: "/notifications"
         },
         redirect: {
             vacancies: "vacancies"

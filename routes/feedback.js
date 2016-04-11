@@ -54,7 +54,7 @@ userRef.on("child_added", function (snapshot) {
     })
 })
 
-router.post('/', multer(), function (req, res) {
+router.post('/', function (req, res) {
     var messageFromSlack = req.body.text
     console.log(messageFromSlack)
     var alreadyPostedInSlack = messageFromSlack.match(/^\*/);

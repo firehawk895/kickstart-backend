@@ -60,7 +60,6 @@ function getLeadersInterviews(leaderId) {
 function extractIds(results) {
     var vacancyIds = []
     var jobseekerIds = []
-
     results.body.results.forEach(function (item) {
         vacancyIds.push(item.value.vacancyId)
         jobseekerIds.push(item.value.jobseekerId)
@@ -94,7 +93,6 @@ function injectVacancyAndJobseeker(interviewResults) {
                 anItem.value["jobseeker"] = jobseekerMap[anItem.value.jobseekerId]
                 return anItem
             })
-            console.log(interviewResults.body.results)
             injectedInterviews.resolve(interviewResults)
         })
         .fail(function (err) {

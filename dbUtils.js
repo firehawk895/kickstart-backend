@@ -59,7 +59,8 @@ function queryJoinerOr(queries) {
         returnQuery += query
         returnQuery += ") OR "
     })
-    returnQuery = returnQuery.substring(0, returnQuery.length - 4)
+    if (returnQuery != "")
+        returnQuery = returnQuery.substring(0, returnQuery.length - 4)
     return returnQuery
 }
 
@@ -178,21 +179,33 @@ function createGetOneOnOneGraphRelationQuery(sourceCollection, sourceId, relatio
     return query
 }
 
+var emptyOrchestrateResponse = {
+    body: {
+        total_count: 0,
+        results: []
+    }
+}
+
 function getAllResultsFromList(collection, idList) {
     //how long can the largest lucene query to orchestrate be?
     var queries = []
+    console.log(idList)
 
     idList.forEach(function (id) {
         queries.push(createSearchByIdQuery(id))
     })
     var finalQuery = queryJoinerOr(queries)
-    console.log("the final query ")
     console.log(finalQuery)
-    return db.newSearchBuilder()
-        .collection(collection)
-        .limit(100)
-        //.offset(0)
-        .query(finalQuery)
+    if (finalQuery == "") {
+        //emulate a result from orchestrate that is empty
+        return kew.resolve(emptyOrchestrateResponse)
+    }
+    else
+        return db.newSearchBuilder()
+            .collection(collection)
+            .limit(100)
+            //.offset(0)
+            .query(finalQuery)
 }
 
 /**
@@ -280,7 +293,7 @@ module.exports = {
     queryJoinerOr: queryJoinerOr,
     getAllResultsFromList: getAllResultsFromList,
     getAllItems: getAllItems,
-    createFuzzyQuery : createFuzzyQuery
+    createFuzzyQuery: createFuzzyQuery
 }
 
 

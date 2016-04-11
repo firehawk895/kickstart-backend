@@ -81,7 +81,6 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
 
 //get all interviews of candidates of a leader, filter with status
 router.get('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
-    console.log("here atleast?")
     var leaderId = req.user.results[0].path.key;
     var promises = []
     //var userId = req.user.results[0].value.id

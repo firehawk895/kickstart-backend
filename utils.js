@@ -101,7 +101,10 @@ var insertDistance = function (results, usersLat, usersLong) {
 }
 
 var createHashMap = function(results) {
+    console.log("inside createhashMap")
+    console.log(results)
     var injectedResults = dbUtils.injectId(results)
+    console.log("injected")
     var theMap = {}
     injectedResults.forEach(function(result) {
         theMap[result.id] = result

@@ -23,7 +23,7 @@ router.post('/', function (req, res, next) {
         company : req.body.company,
         salary_min : parseInt(req.body.salary_min),
         salary_max : parseInt(req.body.salary_max),
-        food_accommodation : req.body.food_accommodation,
+        food_accommodation : customUtils.stringToBoolean(req.body.food_accommodation),
         educationLevel : parseInt(req.body.educationLevel),
         pf: req.body.pf,
         esi: req.body.esi,

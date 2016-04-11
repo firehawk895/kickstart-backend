@@ -7,6 +7,7 @@ oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var kew = require('kew');
 var customUtils = require('../utils')
+var JobseekerModel = require('../models/Jobseeker')
 
 function create(interviewPayload) {
     var theInterviewPromise = kew.defer()
@@ -23,6 +24,7 @@ function create(interviewPayload) {
         .then(function (results) {
             interviewPayload["id"] = dbUtils.getIdAfterPost(results)
             theInterviewPromise.resolve(interviewPayload)
+            kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)])
         })
         .fail(function (err) {
             theInterviewPromise.reject(err)

@@ -33,6 +33,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
     var leaderId = req.user.results[0].path.key;
     //use for authorization of leader
     //only a leader to which the jobseeker belongs to can schedule an interview
+    //TODO : who the hell will check for integrity of all these ids
 
     var interviewPayload = {
         vacancyId: req.body.vacancyId,

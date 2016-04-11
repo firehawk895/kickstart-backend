@@ -207,6 +207,8 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             //leaderId: leaderId, //denormalized for easy search, but graph relationships included
             image: theImageInS3
         }
+        
+        db.newPatchBuilder()
 
         console.log(jobSeekerPayload)
 

@@ -28,6 +28,13 @@ function create(leaderId, jobseekerPayload) {
     return createdJobSeekerPromise
 }
 
+function incrementInterviews(jobseekerId) {
+    return db.newPatchBuilder('jobseekers', jobseekerId)
+        .inc('interview_count', 1)
+        .apply()
+}
+
 module.exports = {
-    create: create
+    create: create,
+    incrementInterviews : incrementInterviews
 }

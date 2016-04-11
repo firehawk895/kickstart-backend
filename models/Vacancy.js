@@ -60,9 +60,11 @@ function createTradeQuery(trade) {
     return dbUtils.createFieldQuery("trade", trade)
 }
 
+
+
 module.exports = {
     create: create,
     createAgeQuery: createAgeQuery,
     createEducationQuery: createEducationQuery,
-    createTradeQuery: createTradeQuery
+    createTradeQuery: createTradeQuery,
 }

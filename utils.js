@@ -141,11 +141,20 @@ function upload(file, callback) {
     }
 }
 
+function stringToBoolean(theString) {
+    if (theString == "true") {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 module.exports = {
     insertDistance : insertDistance,
     sendErrors : sendErrors,
     sendSms : sendSms,
     generateToken : generateToken,
     createHashMap : createHashMap,
-    upload : upload
+    upload : upload,
+    stringToBoolean : stringToBoolean
 }

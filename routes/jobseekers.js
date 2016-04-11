@@ -142,6 +142,8 @@ router.post('/trades', [passport.authenticate('bearer', {session: false}), funct
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var leaderId = req.user.results[0].path.key;
+    var otp = req.body.otp
+    
     customUtils.upload(req.files.avatar, function (theImageInS3) {
         console.log(theImageInS3)
         var jobSeekerPayload = {
@@ -170,6 +172,8 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
 
         JobseekerModel.create(leaderId, jobSeekerPayload)
             .then(function (response) {
+                var message = "Your OTP : " + otp
+                customUtils.sendSms(message, jobSeekerPayload.mobile)
                 res.send({
                     data: response
                 })
@@ -189,7 +193,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             name: req.body.name,
             mobile: req.body.mobile,
             educationLevel: parseInt(req.body.educationLevel),
-            mobileVerified: false,
+            mobileVerified: customUtils.stringToBoolean(req.body.mobileVerified),
             interview_count: 0,
             location_name: req.body.location_name,
             location: {
@@ -218,6 +222,26 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             })
     })
 
+}])
+
+router.post('/verify', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
+    var otp = req.body.otp
+    customUtils.sendSms()
+
+}])
+
+router.delete('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
+    var jobseekerId = req.query.id
+    db.remove('jobseekers', jobseekerId, true)
+        .then(function (result) {
+            res.send({
+                data: {}
+            })
+            res.status(200)
+        })
+        .fail(function (err) {
+            customUtils.sendErrors([err.body.message], 422, res)
+        })
 }])
 
 module.exports = router

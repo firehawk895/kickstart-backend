@@ -55,13 +55,16 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     var vacancyQueries = [
         dbUtils.createFuzzyQuery("jobTitle", spaceEscapedQuery),
         dbUtils.createFuzzyQuery("company", spaceEscapedQuery),
-        dbUtils.createFuzzyQuery("trade", spaceEscapedQuery)
+        dbUtils.createFuzzyQuery("trade", spaceEscapedQuery),
+        dbUtils.createFuzzyQuery("location_name", spaceEscapedQuery),
     ]
     var finalVacancyQuery = dbUtils.queryJoinerOr(vacancyQueries)
 
     var jobseekerQueries = [
         dbUtils.createFuzzyQuery("name", spaceEscapedQuery),
-        dbUtils.createFuzzyQuery("preferredTrades", spaceEscapedQuery)
+        dbUtils.createFuzzyQuery("preferredTrades", spaceEscapedQuery),
+        dbUtils.createFuzzyQuery("location_name", spaceEscapedQuery),
+        dbUtils.createFuzzyQuery("mobile", spaceEscapedQuery)
     ]
     var finalJobseekerQuery = dbUtils.queryJoinerOr(jobseekerQueries)
     console.log(finalJobseekerQuery)

@@ -14,6 +14,9 @@ router.post('/login', function (req, res) {
     var mobile = req.body.mobile
     var otp = req.body.otp
 
+    console.log("the request body")
+    console.log(mobile)
+
     UserAuthModel.loginLeaderApi(name, mobile, otp)
         .then(function (response) {
             res.send({
@@ -22,6 +25,8 @@ router.post('/login', function (req, res) {
             res.status(200)
         })
         .fail(function (err) {
+            console.log("login leader error")
+            console.log(err)
             customUtils.sendErrors(err, 422, res)
         })
 })

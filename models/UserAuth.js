@@ -32,16 +32,15 @@ function loginLeaderApi(name, mobile, otp) {
     kew.all([getLeaderByPhoneNumber(mobile), customUtils.sendSms(message, mobile)])
         .then(function (results) {
             if (results[0].body.total_count === 0) {
-                console.log("a new signUp is happening")
                 return signUpLeader(name, mobile)
             } else {
-                console.log("existing leader")
                 return getLeaderByMobile(name, mobile)
             }
         })
         .then(function (results) {
             console.log("fir?")
             leaderPayload = results
+            console.log(leaderPayload)
             return createAuthToken(leaderPayload["id"])
         })
         .then(function (token) {
@@ -125,13 +124,20 @@ function signUpLeader(name, mobile) {
 }
 
 function getLeaderByMobile(mobile) {
-    return db.newSearchBuilder()
+    console.log("the mobile being searched for " + mobile)
+    var leader = kew.defer()
+    db.newSearchBuilder()
         .query(dbUtils.createFieldQuery("mobile", mobile))
-        .limit(1)
         .then(function (results) {
+            console.log("inisde newSearchBuilder")
+            console.log(results.body)
             var theResults = dbUtils.injectId(results)
-            return theResults[0]
+            leader.resolve(theResults[0])
         })
+        .fail(function(err) {
+            leader.reject(err)
+        })
+    return leader
 }
 
 function getUserByPhoneNumber(mobile) {
@@ -141,9 +147,12 @@ function getUserByPhoneNumber(mobile) {
 }
 
 function getLeaderByPhoneNumber(mobile) {
+    // return db.newSearchBuilder()
+    //     .collection('users')
+    //     .query('value.mobile:`' + mobile + '` AND value.isAdmin:`false`')
     return db.newSearchBuilder()
         .collection('users')
-        .query('value.mobile:`' + mobile + '` AND value.isAdmin:`false`')
+        .query('value.mobile:`' + mobile)
 }
 
 function checkIfNewUser(mobile) {

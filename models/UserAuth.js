@@ -32,9 +32,11 @@ function loginLeaderApi(name, mobile, otp) {
     kew.all([getLeaderByPhoneNumber(mobile), customUtils.sendSms(message, mobile)])
         .then(function (results) {
             if (results[0].body.total_count === 0) {
+                console.log("sign up time")
                 return signUpLeader(name, mobile)
             } else {
-                return getLeaderByMobile(name, mobile)
+                console.log("getLeaderTime")
+                return getLeaderByMobile(mobile)
             }
         })
         .then(function (results) {
@@ -147,6 +149,8 @@ function getUserByPhoneNumber(mobile) {
 }
 
 function getLeaderByPhoneNumber(mobile) {
+    console.log("getLeaderByPhoneNumber")
+    console.log("mobile : " + mobile)
     // return db.newSearchBuilder()
     //     .collection('users')
     //     .query('value.mobile:`' + mobile + '` AND value.isAdmin:`false`')

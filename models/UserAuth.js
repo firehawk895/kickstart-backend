@@ -48,6 +48,7 @@ function loginLeaderApi(name, mobile, otp) {
         .then(function (token) {
             leaderPayload["access_token"] = token
             leaderPayloadPromise.resolve(leaderPayload)
+            updateLastSeen(leaderPayload["id"])
         })
         .fail(function (err) {
             leaderPayloadPromise.reject(err)
@@ -198,6 +199,17 @@ function createAuthToken(userId) {
             returnToken.reject(err)
         })
     return returnToken
+}
+
+function updateLastSeen(userId) {
+    db.newPatchBuilder("users", userId)
+        .replace("value.last_seen", date.getTime())
+        .then(function (results) {
+            console.log("last seen updated")
+        })
+        .fail(function (err) {
+            console.log("last seen update failed")
+        })
 }
 
 module.exports = {

@@ -13,6 +13,7 @@ var fs = require('fs'),
         accessKeyId: config.s3.access,
         secretAccessKey: config.s3.secret
     });
+var request = require('request')
 /**
  * calculate direct distance between two coordinates
  * Note: we are using direct distance not motorable distance
@@ -101,15 +102,22 @@ var insertDistance = function (results, usersLat, usersLong) {
 }
 
 var createHashMap = function(results) {
-    console.log("inside createhashMap")
-    console.log(results)
-    var injectedResults = dbUtils.injectId(results)
-    console.log("injected")
     var theMap = {}
-    injectedResults.forEach(function(result) {
-        theMap[result.id] = result
-    })
-    return theMap
+    try {
+        console.log("inside createhashMap")
+        console.log(results)
+        var injectedResults = dbUtils.injectId(results)
+        console.log("injected")
+        injectedResults.forEach(function(result) {
+            theMap[result.id] = result
+        })
+        return theMap
+    } catch(e) {
+        request.post(config.newSlack.feedbackHook, {
+            body: JSON.stringify({text: "*$" + e + "*"})
+        })
+        return theMap
+    }
 }
 
 /**

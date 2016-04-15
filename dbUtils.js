@@ -119,6 +119,16 @@ function createFuzzyQuery(field, value) {
 }
 
 /**
+ * check if key exists.
+ * fully qualified path expected:
+ * _exists_:value.sports.pool
+ * @param fieldPath
+ */
+function createExistsQuery(fieldPath) {
+    return "_exists_:" + fieldPath
+}
+
+/**
  * Inserts the id into every response object
  * extracted from orchestrate's "path" key
  * @param results
@@ -293,7 +303,8 @@ module.exports = {
     queryJoinerOr: queryJoinerOr,
     getAllResultsFromList: getAllResultsFromList,
     getAllItems: getAllItems,
-    createFuzzyQuery: createFuzzyQuery
+    createFuzzyQuery: createFuzzyQuery,
+    createExistsQuery : createExistsQuery
 }
 
 

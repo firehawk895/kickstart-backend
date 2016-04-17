@@ -39,7 +39,8 @@ router.post('/login', function (req, res) {
 router.patch('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
     var sanitizedPayload = {
         name : req.body.name,
-        mobile : req.body.mobile
+        mobile : req.body.mobile,
+        isVerified: customUtils.stringToBoolean(req.body.isVerified)
     }
     
     var responseObj = {}

@@ -42,16 +42,102 @@ function deg2rad(deg) {
     return deg * (Math.PI / 180)
 }
 
-function sendErrors(errorArray, statusCode, res) {
-    /**
-     * include validations if required
-     * TODO: convert this to a mapped array of key : error
-     * That seems to be a more standard way of doing it these days
-     */
+// function sendErrors(errorArray, statusCode, res) {
+//     /**
+//      * include validations if required
+//      * TODO: convert this to a mapped array of key : error
+//      * That seems to be a more standard way of doing it these days
+//      */
+//     var responseObj = {}
+//     responseObj["errors"] = errorArray;
+//     res.status(statusCode);
+//     res.json(responseObj);
+// }
+
+/**
+ * Error response handler,
+ * handles:
+ *      new Error()
+ *      orchestrate error
+ *      quickblox error
+ * @param err
+ * @param res
+ */
+function sendErrors(err, res) {
     var responseObj = {}
-    responseObj["errors"] = errorArray;
-    res.status(statusCode);
-    res.json(responseObj);
+    var statusCode = 422
+    var errorsArray = ["An unexpected error occured"]
+
+    try {
+        //some well thought out javascript here
+        //err.body.message means undefined.message which throws an exception
+        //but checking it in this manner (and knowing that "and" evaluations will ignore the rest 
+        //if the first condition is false
+        //this is as close to programming unagi you can get.
+
+        //if already given an array
+        console.log("this is the error ----------")
+        console.log(err)
+        console.log("this is the error ----------")
+        if (err.constructor === Array) {
+            errorsArray = err
+        } else if (err.body && err.body.message) {
+            console.log("orchestrate error")
+            //orchestrate new Error
+            errorsArray = [err.body.message]
+            statusCode = err.statusCode
+        } else if (err.detail) {
+            //quickblox error
+            /**
+             * "obj": {
+                "code": 403,
+                "status": "403 Forbidden",
+                "message": {
+                  "errors": [
+                    "You don't have appropriate permissions to perform this operation"
+                  ]
+                },
+                "detail": [
+                  "You don't have appropriate permissions to perform this operation"
+                ]
+                }
+             */
+            //TODO : stupid quickblox error that breaks this by have detail = null
+            /**
+             * {
+              "errors": [
+                {
+                  "code": null,
+                  "message": "Resource not found"
+                }
+              ],
+              "obj": {
+                "code": 404,
+                "status": "404 Not Found",
+                "message": {
+                  "code": null,
+                  "message": "Resource not found"
+                },
+                "detail": null
+              }
+            }
+             */
+            console.log("quickblox error")
+            statusCode = err.code
+            errorsArray = err.detail
+        } else if (err.message) {
+            console.log("javascript error")
+            //javascript new Error
+            errorsArray = [err.message]
+        }
+    } catch (e) {
+        console.log("koi nae, non standard error hai")
+    } finally {
+        responseObj["errors"] = errorsArray
+        responseObj["obj"] = err
+        res.status(statusCode)
+        res.json(responseObj)
+    }
 }
 
 function sendSms(message, phoneNumber) {

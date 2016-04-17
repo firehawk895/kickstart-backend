@@ -69,8 +69,12 @@ function signUpAdmin(name, mobile, password) {
 
     checkIfNewUser(mobile)
         .then(function (isNewUser) {
+            console.log("ssup")
+            console.log(isNewUser)
             console.log("abbey")
+            console.log(password)
             var hashedPassword = bcrypt.hashSync(password, 8);
+            console.log("abbey2")
             var user = {
                 "name": name,
                 "mobile": mobile,
@@ -83,14 +87,19 @@ function signUpAdmin(name, mobile, password) {
                 isAdmin: true
             };
             theUser = user
-            theUser.password = undefined
-            return db.post("users", user)
+            // console.log("user payload being posted")
+            // console.log(user)
+            return db.post("users", theUser)
+            console.log("here1")
         })
         .then(function (result) {
+            console.log("here2")
             theUser["id"] = dbUtils.getIdAfterPost(result)
         })
         .then(function (token) {
-            theUser["access_taken"] = token
+            console.log("here3")
+            theUser["access_token"] = token
+            theUser["password"] = undefined
             signedUpUser.resolve(theUser)
         })
         .fail(function (err) {
@@ -137,10 +146,47 @@ function getLeaderByMobile(mobile) {
             var theResults = dbUtils.injectId(results)
             leader.resolve(theResults[0])
         })
-        .fail(function(err) {
+        .fail(function (err) {
             leader.reject(err)
         })
     return leader
+}
+
+function loginAdmin(mobile, password) {
+    console.log("the mobile being searched for " + mobile)
+    var admin = kew.defer()
+    db.newSearchBuilder()
+        .query(dbUtils.createFieldQuery("mobile", mobile))
+        .then(function (results) {
+            if (results.body.count == 1) {
+                var theResults = dbUtils.injectId(results)
+                
+                if (theResults[0].isAdmin) {
+                    var hash = theResults[0].password;
+                    if (bcrypt.compareSync(password, hash)) {
+                        createAuthToken(theResults[0].id)
+                            .then(function (result) {
+                                var theAdmin = theResults[0]
+                                theAdmin.password = undefined
+                                theAdmin["access_token"] = result
+                                admin.resolve(theAdmin)
+                            })
+                            .fail(function (err) {
+                                admin.reject(err)
+                            })
+                    }
+                    else admin.reject(new Error("Incorrect password"))
+                } else {
+                    admin.reject(new Error("The registered user is not an admin"))
+                }
+            } else {
+                admin.reject(new Error("user not found"))
+            }
+        })
+        .fail(function (err) {
+            admin.reject(err)
+        })
+    return admin
 }
 
 function getUserByPhoneNumber(mobile) {
@@ -161,17 +207,15 @@ function getLeaderByPhoneNumber(mobile) {
 }
 
 function checkIfNewUser(mobile) {
-    console.log("ya")
     var newUser = kew.defer()
     getUserByPhoneNumber(mobile)
         .then(function (result) {
-            console.log("the result")
-            if (result.body.total_count === 0) {
-                console.log("no ways")
+            console.log("examine this")
+            console.log(result.body)
+            if (result.body.total_count == 0) {
                 newUser.resolve("")
             } else {
-                console.log("yes ways")
-                newUser.reject("The user already exists")
+                newUser.reject(new Error("The user already exists"))
             }
         })
         .fail(function (err) {
@@ -186,8 +230,8 @@ function createAuthToken(userId) {
     var accessToken = customUtils.generateToken();
     var returnToken = kew.defer()
     db.put('tokens', accessToken, {
-        "user": userId
-    })
+            "user": userId
+        })
         .then(function (r) {
             return dbUtils.createGraphRelationPromise('tokens', accessToken, 'users', userId, 'hasUser')
         })
@@ -214,5 +258,6 @@ function updateLastSeen(userId) {
 
 module.exports = {
     loginLeaderApi: loginLeaderApi,
-    signUpAdmin: signUpAdmin
+    signUpAdmin: signUpAdmin,
+    loginAdmin: loginAdmin
 }

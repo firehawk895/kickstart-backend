@@ -127,9 +127,23 @@ function injectVacancyAndJobseeker(interviewResults) {
     return injectedInterviews
 }
 
+/**
+ * get an interview,
+ * not using db.get so that other methods are compatible with the result
+ * @param id
+ * @returns {SearchBuilder}
+ */
+function getInterview(id) {
+    var query = dbUtils.createSearchByIdQuery(id)
+    return db.newSearchBuilder()
+        .collection("interviews")
+        .query(query)
+}
+
 module.exports = {
     create: create,
     edit: edit,
     getLeadersInterviews: getLeadersInterviews,
-    injectVacancyAndJobseeker: injectVacancyAndJobseeker
+    injectVacancyAndJobseeker: injectVacancyAndJobseeker,
+    getInterview : getInterview
 }

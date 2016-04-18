@@ -103,6 +103,10 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     queries.push("@path.kind:item")
     var isLeaderQuery = false
 
+    if (req.query.id) {
+        queries.push(dbUtils.createSearchByIdQuery(req.query.id))
+    }
+
     if (req.query.leaderId) {
         queries.push(dbUtils.createFieldQuery('leaderId', req.query.leaderId))
         //cool stuff but not so cool stuff -->> promises.push(InterviewModel.getLeadersInterviews(req.query.leaderId))

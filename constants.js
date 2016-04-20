@@ -42,6 +42,11 @@ module.exports = {
         "Graphic Design",
         "None"
     ],
+    jobStatus : [
+        "Unemployed",
+        "Looking for job",
+        "Not looking for job"
+    ],
     interviewStatus: {
         scheduled: "scheduled",
         appeared: "appeared",

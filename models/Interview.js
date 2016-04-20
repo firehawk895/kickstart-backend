@@ -26,7 +26,10 @@ function create(interviewPayload) {
         .then(function (results) {
             interviewPayload["id"] = compositeKey
             theInterviewPromise.resolve(interviewPayload)
-            kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)], sendInterviewSms(interviewPayload.jobseekerId, interviewPayload.vacancyId, interviewPayload.interviewTime))
+            return kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)], sendInterviewSms(interviewPayload.jobseekerId, interviewPayload.vacancyId, interviewPayload.interviewTime))
+        })
+        .then(function (results) {
+            
         })
         .fail(function (err) {
             theInterviewPromise.reject(err)

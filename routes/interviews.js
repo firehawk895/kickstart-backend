@@ -42,6 +42,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         status: constants.interviewStatus.scheduled,
         leaderId: leaderId //check the get API, you will realize why we have kept this
     }
+    console.log(interviewPayload)
 
     var vacancy
     var jobseeker
@@ -49,17 +50,25 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         .then(function (results) {
             vacancy = results[0]
             jobseeker = results[1]
+            console.log("stage1")
             return InterviewModel.create(interviewPayload)
         })
         .then(function (interviewPayload) {
+            console.log("stage2")
+            console.log(interviewPayload.id)
             return InterviewModel.getInterview(interviewPayload.id)
         })
         .then(function(interviewResults) {
+            console.log("stage3")
+            console.log(interviewResults.body)
             return InterviewModel.injectVacancyAndJobseeker(interviewResults)
         })
         .then(function(results) {
+            console.log("finals stage")
+            var theResults = dbUtils.injectId(results)
+            console.log(theResults[0])
             res.send({
-                data: dbUtils.injectId(results)[0]
+                data: theResults[0]
             })
             res.status(200)
         })

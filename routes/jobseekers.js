@@ -150,7 +150,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
         var jobSeekerPayload = {
             name: req.body.name,
             mobile: req.body.mobile,
-            educationLevel: parseInt(req.body.educationLevel),
+            educationLevel: req.body.educationLevel,
             mobileVerified: false,
             interview_count: 0,
             location_name: req.body.location_name,
@@ -169,7 +169,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
             hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone),
             computer: req.body.computer,
             // trades: {},
-            comments: "",
+            comments: req.body.comments,
             leaderId: leaderId, //denormalized for easy search, but graph relationships included
             avatar: ((theImageInS3)?theImageInS3.url: ""),
             avatarThumb: ((theImageInS3)?theImageInS3.urlThumb: "")
@@ -198,6 +198,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
     if(req.body.lat) req.body.lat = parseFloat(req.body.lat)
     if(req.body.long) req.body.long = parseFloat(req.body.long)
     if(req.body.dateOfBirth) req.body.long = parseInt(req.body.dateOfBirth)
+    var hasSelectedTrades = false
 
     customUtils.upload(req.files.avatar, function (theImageInS3) {
         var jobSeekerPayload = {
@@ -221,14 +222,16 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone),
             computer: req.body.computer,
             trades: {},
-            comments: "",
+            comments: req.body.comments,
             //leaderId: leaderId, //denormalized for easy search, but graph relationships included
             image: theImageInS3
         }
         
         constants.trades.forEach(function (trade) {
+            if(req.body[trade]) hasSelectedTrades = true
             jobSeekerPayload["trades"][trade] = req.body[trade]
         })
+        jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
         
         console.log(jobSeekerPayload)
 

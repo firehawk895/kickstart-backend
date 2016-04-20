@@ -12,18 +12,19 @@ var dateFormat = require('dateformat');
 
 function create(interviewPayload) {
     var theInterviewPromise = kew.defer()
+    var compositeKey
     kew.all([
         dbUtils.createGraphRelationPromise("jobseekers", interviewPayload.jobseekerId, "vacancies", interviewPayload.vacancyId, constants.graphsRelations.jobseekers.interviews),
         dbUtils.createGraphRelationPromise("vacancies", interviewPayload.vacancyId, "jobseekers", interviewPayload.jobseekerId, constants.graphsRelations.vacancies.hasJobSeekers)
     ])
         .then(function (result) {
             //another cool hack to maintain integrity
-            var compositeKey = interviewPayload.jobseekerId + interviewPayload.vacancyId
+            compositeKey = interviewPayload.jobseekerId + interviewPayload.vacancyId
             //succeeds only if absent otherwise throws errors
             return db.put("interviews", compositeKey, interviewPayload, false)
         })
         .then(function (results) {
-            interviewPayload["id"] = dbUtils.getIdAfterPost(results)
+            interviewPayload["id"] = compositeKey
             theInterviewPromise.resolve(interviewPayload)
             kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)], sendInterviewSms(interviewPayload.jobseekerId, interviewPayload.vacancyId, interviewPayload.interviewTime))
         })

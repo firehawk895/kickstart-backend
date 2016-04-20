@@ -29,19 +29,20 @@ function loginLeaderApi(name, mobile, otp) {
     var leaderPayload
     var message = "Your OTP : " + otp
 
-    kew.all([getLeaderByPhoneNumber(mobile), customUtils.sendSms(message, mobile)])
+    kew.all([getLeaderByMobile(mobile), customUtils.sendSms(message, mobile)])
         .then(function (results) {
-            if (results[0].body.total_count === 0) {
+            console.log(results)
+            if (results[0] === undefined) {
                 console.log("sign up time")
                 return signUpLeader(name, mobile)
             } else {
                 console.log("getLeaderTime")
-                return getLeaderByMobile(mobile)
+                return kew.resolve(results[0])
             }
         })
         .then(function (results) {
-            console.log("fir?")
             leaderPayload = results
+            console.log("hmmmmmmm")
             console.log(leaderPayload)
             return createAuthToken(leaderPayload["id"])
         })
@@ -124,7 +125,6 @@ function signUpLeader(name, mobile) {
     db.post("users", user)
         .then(function (result) {
             user["id"] = dbUtils.getIdAfterPost(result)
-            console.log(user)
             //user["id"] = dbUtils.getIdAfterPost(result)
             newLeader.resolve(user)
         })
@@ -139,10 +139,11 @@ function getLeaderByMobile(mobile) {
     console.log("the mobile being searched for " + mobile)
     var leader = kew.defer()
     db.newSearchBuilder()
+        .collection("users")
         .query(dbUtils.createFieldQuery("mobile", mobile))
         .then(function (results) {
-            console.log("inisde newSearchBuilder")
-            console.log(results.body)
+            console.log("----------the ID ------------")
+            console.log(results.body.results[0].path.key)
             var theResults = dbUtils.injectId(results)
             leader.resolve(theResults[0])
         })
@@ -150,6 +151,17 @@ function getLeaderByMobile(mobile) {
             leader.reject(err)
         })
     return leader
+}
+
+function getLeaderByPhoneNumber(mobile) {
+    console.log("getLeaderByPhoneNumber")
+    console.log("mobile : " + mobile)
+    // return db.newSearchBuilder()
+    //     .collection('users')
+    //     .query('value.mobile:`' + mobile + '` AND value.isAdmin:`false`')
+    return db.newSearchBuilder()
+        .collection('users')
+        .query('value.mobile:`' + mobile)
 }
 
 function loginAdmin(mobile, password) {
@@ -195,17 +207,6 @@ function getUserByPhoneNumber(mobile) {
         .query('value.mobile:`' + mobile + '`')
 }
 
-function getLeaderByPhoneNumber(mobile) {
-    console.log("getLeaderByPhoneNumber")
-    console.log("mobile : " + mobile)
-    // return db.newSearchBuilder()
-    //     .collection('users')
-    //     .query('value.mobile:`' + mobile + '` AND value.isAdmin:`false`')
-    return db.newSearchBuilder()
-        .collection('users')
-        .query('value.mobile:`' + mobile)
-}
-
 function checkIfNewUser(mobile) {
     var newUser = kew.defer()
     getUserByPhoneNumber(mobile)
@@ -242,6 +243,8 @@ function createAuthToken(userId) {
             console.log("failed here")
             returnToken.reject(err)
         })
+    //10e330133f025839
+    //10e35709490283e0
     return returnToken
 }
 

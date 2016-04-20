@@ -30,9 +30,7 @@ router.post('/login', function (req, res) {
             res.status(200)
         })
         .fail(function (err) {
-            console.log("login leader error")
-            console.log(err)
-            customUtils.sendErrors(err, 422, res)
+            customUtils.sendErrors(err, res)
         })
 })
 

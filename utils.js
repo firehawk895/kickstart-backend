@@ -76,9 +76,9 @@ function sendErrors(err, res) {
         //this is as close to programming unagi you can get.
 
         //if already given an array
-        console.log("this is the error ----------")
-        console.log(err)
-        console.log("this is the error ----------")
+        // console.log("this is the error ----------")
+        // console.log(err)
+        // console.log("this is the error ----------")
         if (err.constructor === Array) {
             errorsArray = err
         } else if (err.body && err.body.message) {

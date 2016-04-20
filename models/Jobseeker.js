@@ -28,6 +28,10 @@ function create(leaderId, jobseekerPayload) {
     return createdJobSeekerPromise
 }
 
+function parseTrades() {
+    
+}
+
 function incrementInterviews(jobseekerId) {
     return db.newPatchBuilder('jobseekers', jobseekerId)
         .inc('interview_count', 1)

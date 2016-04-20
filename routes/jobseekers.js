@@ -6,6 +6,7 @@ var customUtils = require('../utils')
 var fs = require('fs')
 var dbUtils = require('../dbUtils')
 var passport = require('passport')
+var constants = require('../constants')
 
 var config = require('../config.js');
 var oio = require('orchestrate');
@@ -167,7 +168,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
             license: req.body.license,
             hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone),
             computer: req.body.computer,
-            trades: {},
+            // trades: {},
             comments: "",
             leaderId: leaderId, //denormalized for easy search, but graph relationships included
             avatar: ((theImageInS3)?theImageInS3.url: ""),
@@ -224,6 +225,10 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             //leaderId: leaderId, //denormalized for easy search, but graph relationships included
             image: theImageInS3
         }
+        
+        constants.trades.forEach(function (trade) {
+            jobSeekerPayload["trades"][trade] = req.body[trade]
+        })
         
         console.log(jobSeekerPayload)
 

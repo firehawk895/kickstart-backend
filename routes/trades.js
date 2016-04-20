@@ -30,23 +30,24 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
 }])
 
 router.get('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
-    db.list("trades")
-        .then(function (results) {
-            res.send({
-                data: {
-                    trades : dbUtils.injectId(results),
-                    education : Object.keys(constants.education),
-                    communication : constants.communication,
-                    license : constants.license,
-                    computer : constants.computer,
-                    jobStatus : constants.jobStatus
-                }
-            })
-            res.status(200)
-        })
-        .fail(function (err) {
-            customUtils.sendErrors([err.body.message], 422, res)
-        })
+    // db.list("trades")
+    //     .then(function (results) {
+    res.send({
+        data: {
+            // trades : dbUtils.injectId(results),
+            trades: constants.trades,
+            education: Object.keys(constants.education),
+            communication: constants.communication,
+            license: constants.license,
+            computer: constants.computer,
+            jobStatus: constants.jobStatus
+        }
+    })
+    res.status(200)
+    // })
+    // .fail(function (err) {
+    //     customUtils.sendErrors([err.body.message], 422, res)
+    // })
 }])
 
 router.patch('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {

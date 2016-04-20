@@ -42,6 +42,27 @@ module.exports = {
         "Graphic Design",
         "None"
     ],
+    trades: [
+        "Housekeeping",
+        "Security",
+        "Back Office",
+        "Delivery",
+        "Sales Executive",
+        "Field Staff",
+        "Driver",
+        "Helper",
+        "Hospital Staff",
+        "Hospitality Executive",
+        "Supervisor",
+        "Packers",
+        "Team Member",
+        "Promotional Staff",
+        "Assistance Manager",
+        "Plumber",
+        "Electrician",
+        "Field Supervisor",
+        "Kitchen Staff"
+    ],
     jobStatus : [
         "Unemployed",
         "Looking for job",

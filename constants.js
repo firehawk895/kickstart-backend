@@ -14,15 +14,34 @@ module.exports = {
     //keyed with number so that
     //"below" education type queries can be run
     education: {
-        "below 8th": 0,
+        "Below 8th": 0,
         "10th pass": 1,
         "12th pass": 2,
-        "pursuing graduation": 3,
-        "graduate": 4,
-        "diploma(technical)": 5,
-        "masters(arts, comm, science)" : 6,
-        "mba": 7
+        "Pursuing graduation": 3,
+        "Graduate": 4,
+        "Diploma(technical)": 5,
+        "Masters(arts, comm, science)" : 6,
+        "Mba": 7
     },
+    communication: [
+        "Basic hindi",
+        "Fluent hindi",
+        "Basic english"
+    ],
+    license: [
+        "Non-commercial",
+        "Commercial",
+        "Learning",
+        "None"
+    ],
+    computer: [
+        "Basic computer operator", //(basic MS Excel, Word, internet, emails)
+        "Advanced computer",
+        "Tally",
+        "Computer Languages",
+        "Graphic Design",
+        "None"
+    ],
     interviewStatus: {
         scheduled: "scheduled",
         appeared: "appeared",

@@ -35,7 +35,10 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
             res.send({
                 data: {
                     trades : dbUtils.injectId(results),
-                    education : Object.keys(constants.education)
+                    education : Object.keys(constants.education),
+                    communication : constants.communication,
+                    license : constants.license,
+                    computer : constants.computer
                 }
             })
             res.status(200)

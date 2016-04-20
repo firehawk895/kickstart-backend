@@ -14,12 +14,14 @@ module.exports = {
     //keyed with number so that
     //"below" education type queries can be run
     education: {
-        "below 10th": 1,
-        "10th pass": 2,
-        "below 12th": 3,
-        "12th pass": 4,
-        "pursuing grad": 5,
-        "graduate and above": 6
+        "below 8th": 0,
+        "10th pass": 1,
+        "12th pass": 2,
+        "pursuing graduation": 3,
+        "graduate": 4,
+        "diploma(technical)": 5,
+        "masters(arts, comm, science)" : 6,
+        "mba": 7
     },
     interviewStatus: {
         scheduled: "scheduled",

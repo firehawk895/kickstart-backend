@@ -8,6 +8,7 @@ var db = oio(config.db.key);
 var customUtils = require('../utils')
 var passport = require('passport');
 var dbUtils = require('../dbUtils')
+var constants = require('../constants')
 
 router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
     var trade = req.body.trade
@@ -32,7 +33,10 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     db.list("trades")
         .then(function (results) {
             res.send({
-                data: dbUtils.injectId(results)
+                data: {
+                    trades : dbUtils.injectId(results),
+                    education : Object.keys(constants.education)
+                }
             })
             res.status(200)
         })

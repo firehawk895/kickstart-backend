@@ -43,16 +43,26 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         leaderId: leaderId //check the get API, you will realize why we have kept this
     }
 
+    var vacancy
+    var jobseeker
     kew.all([db.get('vacancies', interviewPayload.vacancyId), db.get('jobseekers', interviewPayload.jobseekerId)])
         .then(function (results) {
+            vacancy = results[0]
+            jobseeker = results[1]
             return InterviewModel.create(interviewPayload)
         })
-        .then((function (response) {
+        .then(function (interviewPayload) {
+            return InterviewModel.getInterview(interviewPayload.id)
+        })
+        .then(function(interviewResults) {
+            return InterviewModel.injectVacancyAndJobseeker(interviewResults)
+        })
+        .then(function(results) {
             res.send({
-                data: response
+                data: dbUtils.injectId(results)[0]
             })
             res.status(200)
-        }))
+        })
         .fail(function (err) {
             res.send(
                 {
@@ -60,6 +70,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
                     errorObj: err
                 }
             )
+            res.status(400)
         })
 }])
 
@@ -121,8 +132,8 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         //cool stuff but not so cool stuff -->> promises.push(InterviewModel.getLeadersInterviews(req.query.leaderId))
     }
 
-    if (req.query.monetized) {
-        queries.push(dbUtils.createFieldQuery('status', constants.interviewStatus.monetized))
+    if (req.query.status) {
+        queries.push(dbUtils.createFieldQuery('status', req.query.status))
     }
 
     if (req.query.vacancyId) {

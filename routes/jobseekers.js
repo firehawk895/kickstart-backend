@@ -114,37 +114,37 @@ router.get('/', function (req, res) {
         })
 })
 
-router.post('/trades', [passport.authenticate('bearer', {session: false}), function (req, res) {
-    var responseObj = {}
-    var userId = req.user.results[0].value.id;
-    var jobseekerId = req.query.id;
-
-    //The great hack to not use json as input
-    var comments = req.body.comments
-    req.body.comments = undefined
-
-    console.log("updating trades")
-    db.merge("jobseekers", jobseekerId, {
-        trades: req.body,
-        hasSelectedTrades: true,
-        comments: comments
-        //sportsList: Object.keys(req.body)
-    })
-        .then(function (result) {
-            responseObj["data"] = [];
-            responseObj["msg"] = "Trades Updated";
-            res.status(201);
-            res.json(responseObj);
-        })
-        .fail(function (err) {
-            customUtils.sendErrors([err.body.message], 422, res)
-        })
-}])
+// router.post('/trades', [passport.authenticate('bearer', {session: false}), function (req, res) {
+//     var responseObj = {}
+//     var userId = req.user.results[0].value.id;
+//     var jobseekerId = req.query.id;
+//
+//     //The great hack to not use json as input
+//     var comments = req.body.comments
+//     req.body.comments = undefined
+//
+//     console.log("updating trades")
+//     db.merge("jobseekers", jobseekerId, {
+//         trades: req.body,
+//         hasSelectedTrades: true,
+//         comments: comments
+//         //sportsList: Object.keys(req.body)
+//     })
+//         .then(function (result) {
+//             responseObj["data"] = [];
+//             responseObj["msg"] = "Trades Updated";
+//             res.status(201);
+//             res.json(responseObj);
+//         })
+//         .fail(function (err) {
+//             customUtils.sendErrors([err.body.message], 422, res)
+//         })
+// }])
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var leaderId = req.user.results[0].path.key;
     var otp = req.body.otp
-    
+    var hasSelectedTrades = false
     customUtils.upload(req.files.avatar, function (theImageInS3) {
         console.log(theImageInS3)
         var jobSeekerPayload = {
@@ -161,9 +161,9 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
             gender: req.body.gender,
             hasSelectedTrades: false,
             dateOfBirth: parseInt(req.body.dateOfBirth),
-            lastSalary : req.body.lastSalary,
-            jobStatus : req.body.jobStatus,
-            communication : req.body.communication,
+            lastSalary: req.body.lastSalary,
+            jobStatus: req.body.jobStatus,
+            communication: req.body.communication,
             hasBike: customUtils.stringToBoolean(req.body.hasBike),
             license: req.body.license,
             hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone),
@@ -171,9 +171,17 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
             // trades: {},
             comments: req.body.comments,
             leaderId: leaderId, //denormalized for easy search, but graph relationships included
-            avatar: ((theImageInS3)?theImageInS3.url: ""),
-            avatarThumb: ((theImageInS3)?theImageInS3.urlThumb: "")
+            avatar: ((theImageInS3) ? theImageInS3.url : ""),
+            avatarThumb: ((theImageInS3) ? theImageInS3.urlThumb : "")
         }
+
+        constants.trades.forEach(function (trade) {
+            if (req.body[trade])
+                hasSelectedTrades = true
+            if (req.body[trade])
+                jobSeekerPayload["trades"][trade] = req.body[trade]
+        })
+        jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
 
         console.log("leader id " + leaderId)
         console.log(jobSeekerPayload)
@@ -195,9 +203,10 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
 
 router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var jobseekerId = req.query.id
-    if(req.body.lat) req.body.lat = parseFloat(req.body.lat)
-    if(req.body.long) req.body.long = parseFloat(req.body.long)
-    if(req.body.dateOfBirth) req.body.long = parseInt(req.body.dateOfBirth)
+    if (req.body.lat) req.body.lat = parseFloat(req.body.lat)
+    if (req.body.long) req.body.long = parseFloat(req.body.long)
+    if (req.body.hasBike) req.body.long = customUtils.stringToBoolean(req.body.hasBike)
+    if (req.body.hasSmartphone) req.body.long = customUtils.stringToBoolean(req.body.hasSmartphone)
     var hasSelectedTrades = false
 
     customUtils.upload(req.files.avatar, function (theImageInS3) {
@@ -214,25 +223,29 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             },
             gender: req.body.gender,
             dateOfBirth: req.body.dateOfBirth,
-            lastSalary : req.body.lastSalary,
-            jobStatus : req.body.jobStatus,
-            communication : req.body.communication,
-            hasBike: customUtils.stringToBoolean(req.body.hasBike),
+            lastSalary: req.body.lastSalary,
+            jobStatus: req.body.jobStatus,
+            communication: req.body.communication,
+            hasBike: req.body.hasBike,
             license: req.body.license,
-            hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone),
+            hasSmartphone: req.body.hasSmartphone,
             computer: req.body.computer,
             trades: {},
             comments: req.body.comments,
             //leaderId: leaderId, //denormalized for easy search, but graph relationships included
             image: theImageInS3
         }
-        
+
         constants.trades.forEach(function (trade) {
-            if(req.body[trade]) hasSelectedTrades = true
-            jobSeekerPayload["trades"][trade] = req.body[trade]
+            if (req.body[trade])
+                hasSelectedTrades = true
+            if (req.body[trade])
+                jobSeekerPayload["trades"][trade] = req.body[trade]
+            else
+                jobSeekerPayload["trades"][trade] = null //ensures an old key is deleted
         })
         jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
-        
+
         console.log(jobSeekerPayload)
 
         db.merge("jobseekers", jobseekerId, jobSeekerPayload)

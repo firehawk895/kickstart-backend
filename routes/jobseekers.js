@@ -194,21 +194,24 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
 
 router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var jobseekerId = req.query.id
+    if(req.body.lat) req.body.lat = parseFloat(req.body.lat)
+    if(req.body.long) req.body.long = parseFloat(req.body.long)
+    if(req.body.dateOfBirth) req.body.long = parseInt(req.body.dateOfBirth)
 
     customUtils.upload(req.files.avatar, function (theImageInS3) {
         var jobSeekerPayload = {
             name: req.body.name,
             mobile: req.body.mobile,
-            educationLevel: parseInt(req.body.educationLevel),
+            educationLevel: req.body.educationLevel,
             mobileVerified: customUtils.stringToBoolean(req.body.mobileVerified),
             interview_count: 0,
             location_name: req.body.location_name,
             location: {
-                lat: parseFloat(req.body.lat),
-                long: parseFloat(req.body.long)
+                lat: req.body.lat,
+                long: req.body.long
             },
             gender: req.body.gender,
-            dateOfBirth: parseInt(req.body.dateOfBirth),
+            dateOfBirth: req.body.dateOfBirth,
             lastSalary : req.body.lastSalary,
             jobStatus : req.body.jobStatus,
             communication : req.body.communication,

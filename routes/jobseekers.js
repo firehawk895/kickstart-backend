@@ -205,7 +205,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
     var jobseekerId = req.query.id
     if (req.body.lat) req.body.lat = parseFloat(req.body.lat)
     if (req.body.long) req.body.long = parseFloat(req.body.long)
-    if (req.body.hasBike) req.body.long = customUtils.stringToBoolean(req.body.hasBike)
+    if (req.body.hasBike) req.body.hasBike = customUtils.stringToBoolean(req.body.hasBike)
     if (req.body.hasSmartphone) req.body.long = customUtils.stringToBoolean(req.body.hasSmartphone)
     var hasSelectedTrades = false
 

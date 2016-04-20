@@ -239,11 +239,12 @@ function upload(file, callback) {
 }
 
 function stringToBoolean(theString) {
-    if (theString == "true") {
-        return true;
-    } else {
-        return false;
-    }
+    if(theString === undefined)
+        return undefined
+    if (theString == "true")
+        return true
+    else
+        return false
 }
 
 module.exports = {

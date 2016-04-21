@@ -28,11 +28,14 @@ function loginLeaderApi(name, mobile, otp) {
     var leaderPayloadPromise = kew.defer()
     var leaderPayload
     var message = "Your OTP : " + otp
+    console.log("kewing all")
 
     kew.all([getLeaderByMobile(mobile), customUtils.sendSms(message, mobile)])
         .then(function (results) {
             console.log(results)
-            if (results[0] === undefined) {
+            console.log("length")
+            console.log(results.length)
+            if (results[0].length === 0) {
                 console.log("sign up time")
                 return signUpLeader(name, mobile)
             } else {
@@ -143,9 +146,13 @@ function getLeaderByMobile(mobile) {
         .query(dbUtils.createFieldQuery("mobile", mobile))
         .then(function (results) {
             console.log("----------the ID ------------")
-            console.log(results.body.results[0].path.key)
-            var theResults = dbUtils.injectId(results)
-            leader.resolve(theResults[0])
+            if(results.body.total_count === 0)
+                leader.resolve([])
+            else {
+                console.log(results.body.results[0].path.key)
+                var theResults = dbUtils.injectId(results)
+                leader.resolve(theResults[0])
+            }
         })
         .fail(function (err) {
             leader.reject(err)

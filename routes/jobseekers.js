@@ -250,7 +250,9 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
         
         if(hasSelectedTrades) {
             jobSeekerPayload["trades"] = tradesPayload
+            jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
         }
+        
 
         console.log(jobSeekerPayload)
 

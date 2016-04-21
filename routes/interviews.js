@@ -66,9 +66,9 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         .then(function(results) {
             console.log("finals stage")
             var theResults = dbUtils.injectId(results)
-            console.log(theResults[0])
+            console.log(theResults)
             res.send({
-                data: theResults[0]
+                data: theResults
             })
             res.status(200)
         })

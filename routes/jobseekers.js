@@ -230,21 +230,27 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             license: req.body.license,
             hasSmartphone: req.body.hasSmartphone,
             computer: req.body.computer,
-            trades: {},
+            // trades: {},
             comments: req.body.comments,
             //leaderId: leaderId, //denormalized for easy search, but graph relationships included
             image: theImageInS3
         }
+        var tradesPayload = {}
 
         constants.trades.forEach(function (trade) {
-            if (req.body[trade])
+            if (req.body[trade]) {
                 hasSelectedTrades = true
-            if (req.body[trade])
-                jobSeekerPayload["trades"][trade] = req.body[trade]
+                tradesPayload[trade] = req.body[trade]
+            }
             else
-                jobSeekerPayload["trades"][trade] = null //ensures an old key is deleted
+                tradesPayload[trade] = null //ensures an old key is deleted
         })
-        jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
+        
+        console.log("hasSelectedTrade : " + hasSelectedTrades)
+        
+        if(hasSelectedTrades) {
+            jobSeekerPayload["trades"] = tradesPayload
+        }
 
         console.log(jobSeekerPayload)
 
@@ -254,7 +260,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             })
             .then(function (jobseeker) {
                 res.send({
-                    data: jobseeker
+                    data: jobseeker.body
                 })
                 res.status(200)
             })

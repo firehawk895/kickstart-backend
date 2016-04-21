@@ -63,8 +63,7 @@ function deg2rad(deg) {
  * @param err
  * @param res
  */
-function sendErrors(err, res) {
-    var responseObj = {}
+function getErrors(err) {
     var statusCode = 422
     var errorsArray = ["An unexpected error occured"]
 
@@ -85,6 +84,8 @@ function sendErrors(err, res) {
             console.log("orchestrate error")
             //orchestrate new Error
             errorsArray = [err.body.message]
+            console.log("bosdiwala orchestrate")
+            console.log(err.statusCode)
             statusCode = err.statusCode
         } else if (err.detail) {
             //quickblox error
@@ -133,11 +134,21 @@ function sendErrors(err, res) {
     } catch (e) {
         console.log("koi nae, non standard error hai")
     } finally {
-        responseObj["errors"] = errorsArray
-        responseObj["obj"] = err
-        res.status(statusCode)
-        res.json(responseObj)
+        return {
+            errorsArray : errorsArray,
+            err : err,
+            statusCode : statusCode
+        }
     }
+}
+
+function sendErrors(err, res) {
+    var responseObj = {}
+    var data = getErrors(err)
+    responseObj["errors"] = data.errorsArray
+    responseObj["obj"] = data.err
+    res.status(data.statusCode)
+    res.json(responseObj)
 }
 
 function sendSms(message, phoneNumber) {
@@ -250,6 +261,7 @@ function stringToBoolean(theString) {
 module.exports = {
     insertDistance : insertDistance,
     sendErrors : sendErrors,
+    getErrors : getErrors,
     sendSms : sendSms,
     generateToken : generateToken,
     createHashMap : createHashMap,

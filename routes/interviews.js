@@ -30,6 +30,7 @@ var passport = require('passport');
 
 //schedule an interview
 router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
+    var responseObj = {}
     var leaderId = req.user.results[0].path.key;
     //use for authorization of leader
     //only a leader to which the jobseeker belongs to can schedule an interview
@@ -73,13 +74,13 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
             res.status(200)
         })
         .fail(function (err) {
-            res.send(
-                {
-                    errors: ["Check the vacancy or jobseeker. They may be invalid"],
-                    errorObj: err
-                }
-            )
-            res.status(400)
+            var errorObj = customUtils.getErrors(err)
+            if(errorObj.statusCode === 412) {
+                responseObj["errors"] = ["The interview for this candidate is already scheduled"]
+                responseObj["obj"] = errorObj.err
+                res.status(errorObj.statusCode)
+                res.json(responseObj)
+            }
         })
 }])
 

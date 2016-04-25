@@ -26,7 +26,8 @@ module.exports = {
     communication: [
         "Basic hindi",
         "Fluent hindi",
-        "Basic english"
+        "Basic english",
+        "Fluent english"
     ],
     license: [
         "Non-commercial",

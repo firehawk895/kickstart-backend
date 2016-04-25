@@ -36,7 +36,8 @@ router.post('/', function (req, res, next) {
         working_hours: req.body.working_hours, //no. of hours
         interview_date_start: req.body.interview_date_start,//unix timestamp
         interview_date_end: req.body.interview_date_end,//unix timestamp
-        trade : req.body.trade //dropdown list
+        trade : req.body.trade, //dropdown list
+        showTop: customUtils.stringToBoolean(req.body.showTop)
     }
 
     //TODO : also support additional fields

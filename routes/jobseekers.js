@@ -215,7 +215,6 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             mobile: req.body.mobile,
             educationLevel: req.body.educationLevel,
             mobileVerified: customUtils.stringToBoolean(req.body.mobileVerified),
-            interview_count: 0,
             location_name: req.body.location_name,
             location: {
                 lat: req.body.lat,

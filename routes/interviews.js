@@ -108,10 +108,16 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
             return InterviewModel.injectVacancyAndJobseeker(interviewResults)
         })
         .then(function(results) {
+            var finalPayload = dbUtils.injectId(results)[0]
             res.send({
-                data: dbUtils.injectId(results)[0]
+                data: finalPayload
             })
             res.status(200)
+            var message =
+                "Your interview has been updated! " +
+                "status : " + finalPayload.status +
+                 ", time : " + finalPayload.interviewTime
+            customUtils.sendSms(message, finalPayload.jobseeker.mobile)
         })
         .fail(function (err) {
             customUtils.sendErrors(err, 422, res)

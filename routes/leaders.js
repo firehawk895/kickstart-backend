@@ -55,7 +55,6 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
 }])
 
 router.get('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
-    console.log("get facilities")
     var limit = req.query.limit || 100
     var page =  req.query.page || 1
     var offset = limit * (page - 1)
@@ -68,7 +67,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
 
     queries.push("value.isAdmin:false")
     if (req.query.id) {
-        console.log("we have a specific facilityId query")
+        console.log("we have a specific leader's id query")
         queries.push(dbUtils.createSearchByIdQuery(req.query.id))
     }
 
@@ -87,9 +86,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
             res.json(responseObj)
         })
         .fail(function (err) {
-            responseObj["errors"] = [err.body.message]
-            res.status(503)
-            res.json(responseObj)
+            customUtils.sendErrors(err, res)
         })
 }])
 

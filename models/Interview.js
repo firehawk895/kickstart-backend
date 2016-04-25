@@ -25,11 +25,10 @@ function create(interviewPayload) {
         })
         .then(function (results) {
             interviewPayload["id"] = compositeKey
-            theInterviewPromise.resolve(interviewPayload)
             return kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)], sendInterviewSms(interviewPayload.jobseekerId, interviewPayload.vacancyId, interviewPayload.interviewTime))
         })
         .then(function (results) {
-            
+            theInterviewPromise.resolve(interviewPayload)
         })
         .fail(function (err) {
             theInterviewPromise.reject(err)
@@ -49,7 +48,7 @@ function sendInterviewSms(jobseekerId, vacancyId, interviewTime) {
             var vacancy = results[0]
             var jobseeker = results[1]
             message = "You have an interview at " + vacancy.location_name + " for " + vacancy.company + " at " + dateFormat(interviewTime, "dddd, mmmm dS, yyyy, h:MM:ss TT");
-            return sendSms(message, jobseeker.mobile)
+            return customUtils.sendSms(message, jobseeker.mobile)
         })
         .then(function(res) {
             smsStatus.resolve("")

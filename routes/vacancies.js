@@ -13,34 +13,33 @@ var eventSystem = require('../listeners/listeners')
 var constants = require('../constants')
 
 router.post('/', function (req, res, next) {
-    var interviewDatesArray = req.body.interview_dates.map(function(date) {
-        return parseInt(date)
-    })
     var vacancyPayload = {
-        jobTitle : req.body.jobTitle,
-        compulsoryReqs: req.body.compulsoryReqs,
-        preferredReqs: req.body.preferredReqs,
-        company : req.body.company,
-        salary_min : parseInt(req.body.salary_min),
-        salary_max : parseInt(req.body.salary_max),
-        food_accommodation : customUtils.stringToBoolean(req.body.food_accommodation),
-        educationLevel : parseInt(req.body.educationLevel),
-        pf: req.body.pf,
-        esi: req.body.esi,
+        jobTitle : req.body.jobTitle,//
+        compulsoryReqs: req.body.compulsoryReqs, //text
+        preferredReqs: req.body.preferredReqs, //text
+        company : req.body.company,//company dropdown list
+        salary_min : parseInt(req.body.salary_min), //unsigned int whole number
+        salary_max : parseInt(req.body.salary_max),//unsigned int whole number
+        food_accommodation : customUtils.stringToBoolean(req.body.food_accommodation),//bool
+        educationLevel : req.body.educationLevel,//dropdown list
+        pf: req.body.pf, //bool
+        esi: req.body.esi, //bool
         guarantee_time : req.body.guarantee_time, //right now in days
         comments : req.body.comments,
-        age_min : parseInt(req.body.age_min),
-        age_max : parseInt(req.body.age_max),
-        location_name : req.body.location_name,
+        age_min : parseInt(req.body.age_min), //unsigned int
+        age_max : parseInt(req.body.age_max), //unsigned int
+        location_name : req.body.location_name,//
         location : {
-            lat : parseFloat(req.body.lat),
-            long : parseFloat(req.body.long)
+            lat : parseFloat(req.body.lat),//usual lat
+            long : parseFloat(req.body.long)//usual long
         },
-        working_hours_min : req.body.working_hours_min, //decide what format do you need this time in
-        working_house_max : req.body.working_house_max,
-        interview_dates : interviewDatesArray, //array
-        trade : req.body.trade
+        working_hours: req.body.working_hours, //no. of hours
+        interview_date_start: req.body.interview_date_start,//unix timestamp
+        interview_date_end: req.body.interview_date_end,//unix timestamp
+        trade : req.body.trade //dropdown list
     }
+
+    //TODO : also support additional fields
 
     VacancyModel.create(vacancyPayload)
         .then(function(response) {

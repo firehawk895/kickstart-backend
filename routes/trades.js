@@ -40,7 +40,8 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
             communication: constants.communication,
             license: constants.license,
             computer: constants.computer,
-            jobStatus: constants.jobStatus
+            jobStatus: constants.jobStatus,
+            company: constants.company
         }
     })
     res.status(200)

@@ -63,6 +63,9 @@ module.exports = {
         "Field Supervisor",
         "Kitchen Staff"
     ],
+    company : [
+        "Mc Donalds"
+    ],
     jobStatus : [
         "Unemployed",
         "Looking for job",

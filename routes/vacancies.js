@@ -11,6 +11,7 @@ var db = oio(config.db.key);
 var kew = require('kew');
 var eventSystem = require('../listeners/listeners')
 var constants = require('../constants')
+var passport = require('passport')
 
 router.post('/', function (req, res, next) {
     var vacancyPayload = {
@@ -145,5 +146,20 @@ router.get('/', function(req, res) {
     //sorted in increasing order of distance
     //id= will give 1 vacancies details
 })
+
+router.delete('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
+    var vacancyId = req.query.id
+
+    db.remove('vacancy', vacancyId, true)
+        .then(function (result) {
+            res.send({
+                data: {}
+            })
+            res.status(200)
+        })
+        .fail(function (err) {
+            customUtils.sendErrors(err, res)
+        })
+}])
 
 module.exports = router

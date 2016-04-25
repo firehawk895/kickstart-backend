@@ -72,10 +72,11 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
                 data: theResults
             })
             res.status(200)
-            var message = "An interview has been scheduled : " +
-                    "job details : " + theResults.vacancy.jobTitle + ", " + theResults.vacancy.company +
-                    ". Time : " + customUtils.getFormattedDate(theResults.interviewTime)
-            customUtils.sendSms(message, theResults.jobseeker.mobile)
+            var message = "An interview has been scheduled for " +
+                    "job details : " + theResults[0].vacancy.jobTitle + ", " + theResults[0].vacancy.company +
+                    ". Time : " + customUtils.getFormattedDate(theResults[0].interviewTime)
+            console.log(message)
+            customUtils.sendSms(message, theResults[0].jobseeker.mobile)
         })
         .fail(function (err) {
             var errorObj = customUtils.getErrors(err)

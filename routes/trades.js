@@ -41,7 +41,8 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
             license: constants.license,
             computer: constants.computer,
             jobStatus: constants.jobStatus,
-            company: constants.company
+            company: constants.company,
+            interviewStatus: Object.keys(constants.interviewStatus)
         }
     })
     res.status(200)

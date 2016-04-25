@@ -23,8 +23,7 @@ router.post('/', function (req, res, next) {
         salary_max : parseInt(req.body.salary_max),//unsigned int whole number
         food_accommodation : customUtils.stringToBoolean(req.body.food_accommodation),//bool
         educationLevel : req.body.educationLevel,//dropdown list
-        pf: req.body.pf, //bool
-        esi: req.body.esi, //bool
+        pfesi: req.body.pf, //bool
         guarantee_time : req.body.guarantee_time, //right now in days
         comments : req.body.comments,
         age_min : parseInt(req.body.age_min), //unsigned int

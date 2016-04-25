@@ -142,7 +142,7 @@ router.get('/', function (req, res) {
 // }])
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
-    var leaderId = req.user.results[0].path.key;
+    var leaderId = req.body.leaderId || req.user.results[0].path.key;
     var otp = req.body.otp
     var hasSelectedTrades = false
     customUtils.upload(req.files.avatar, function (theImageInS3) {

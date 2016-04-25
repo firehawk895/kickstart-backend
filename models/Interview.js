@@ -25,10 +25,8 @@ function create(interviewPayload) {
         })
         .then(function (results) {
             interviewPayload["id"] = compositeKey
-            return kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)], sendInterviewSms(interviewPayload.jobseekerId, interviewPayload.vacancyId, interviewPayload.interviewTime))
-        })
-        .then(function (results) {
             theInterviewPromise.resolve(interviewPayload)
+            kew.all([JobseekerModel.incrementInterviews(interviewPayload.jobseekerId)])
         })
         .fail(function (err) {
             theInterviewPromise.reject(err)
@@ -40,28 +38,28 @@ function edit(interviewId, interviewPayload) {
     return db.merge("interviews", interviewId, interviewPayload)
 }
 
-function sendInterviewSms(jobseekerId, vacancyId, interviewTime) {
-    var smsStatus = kew.defer()
-    var message = ""
-    kew.all([db.get('vacancies', vacancyId), db.get('jobseekers', jobseekerId)])
-        .then(function(results) {
-            var vacancy = results[0]
-            var jobseeker = results[1]
-            message = "You have an interview at " + vacancy.location_name + " for " + vacancy.company + " at " + dateFormat(interviewTime, "dddd, mmmm dS, yyyy, h:MM:ss TT");
-            return customUtils.sendSms(message, jobseeker.mobile)
-        })
-        .then(function(res) {
-            smsStatus.resolve("")
-            console.log(message)
-            console.log("interview sms sent")
-        })
-        .fail(function (err) {
-            smsStatus.reject(err)
-            console.log("interview sms failed")
-            console.log(err)
-        })
-    return smsStatus
-}
+// function sendInterviewSms(jobseekerId, vacancyId, interviewTime) {
+//     var smsStatus = kew.defer()
+//     var message = ""
+//     kew.all([db.get('vacancies', vacancyId), db.get('jobseekers', jobseekerId)])
+//         .then(function(results) {
+//             var vacancy = results[0]
+//             var jobseeker = results[1]
+//             message = "You have an interview at " + vacancy.location_name + " for " + vacancy.company + " at " + dateFormat(interviewTime, "dddd, mmmm dS, yyyy, h:MM:ss TT");
+//             return customUtils.sendSms(message, jobseeker.mobile)
+//         })
+//         .then(function(res) {
+//             smsStatus.resolve("")
+//             console.log(message)
+//             console.log("interview sms sent")
+//         })
+//         .fail(function (err) {
+//             smsStatus.reject(err)
+//             console.log("interview sms failed")
+//             console.log(err)
+//         })
+//     return smsStatus
+// }
 
 /**
  * this is cool and all, but does not allow flexibility

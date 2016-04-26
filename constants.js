@@ -23,26 +23,23 @@ module.exports = {
         "Masters(arts, comm, science)" : 6,
         "Mba": 7
     },
-    communication: [
-        "Basic hindi",
-        "Fluent hindi",
-        "Basic english",
-        "Fluent english"
-    ],
-    license: [
-        "Non-commercial",
-        "Commercial",
-        "Learning",
-        "None"
-    ],
-    computer: [
-        "Basic computer operator", //(basic MS Excel, Word, internet, emails)
-        "Advanced computer",
-        "Tally",
-        "Computer Languages",
-        "Graphic Design",
-        "None"
-    ],
+    communication: {
+        "Basic hindi": 0,
+        "Fluent hindi": 1,
+        "Basic english": 2,
+        "Fluent english": 3
+    },
+    license: {
+        "None": 0,
+        "Learning": 1,
+        "Non-commercial": 2,
+        "Commercial": 3
+    },
+    computer: {
+        "None": 0,
+        "Basic": 1,
+        "Advanced": 2
+    },
     trades: [
         "Housekeeping",
         "Security",
@@ -63,14 +60,6 @@ module.exports = {
         "Electrician",
         "Field Supervisor",
         "Kitchen Staff"
-    ],
-    company : [
-        "Mc Donalds"
-    ],
-    jobStatus : [
-        "Unemployed",
-        "Looking for job",
-        "Not looking for job"
     ],
     interviewStatus: {
         scheduled: "scheduled",

@@ -37,11 +37,9 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
             // trades : dbUtils.injectId(results),
             trades: constants.trades,
             education: Object.keys(constants.education),
-            communication: constants.communication,
-            license: constants.license,
-            computer: constants.computer,
-            jobStatus: constants.jobStatus,
-            company: constants.company,
+            communication: Object.keys(constants.communication),
+            license: Object.keys(constants.license),
+            computer: Object.keys(constants.computer),
             interviewStatus: Object.keys(constants.interviewStatus)
         }
     })

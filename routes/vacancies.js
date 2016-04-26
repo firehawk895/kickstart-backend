@@ -37,7 +37,12 @@ router.post('/', function (req, res, next) {
         interview_date_start: req.body.interview_date_start,//unix timestamp
         interview_date_end: req.body.interview_date_end,//unix timestamp
         trade : req.body.trade, //dropdown list
-        showTop: customUtils.stringToBoolean(req.body.showTop)
+        showTop: customUtils.stringToBoolean(req.body.showTop),
+        communication: req.body.communication,
+        license: req.body.license,
+        computer: req.body.computer,
+        hasBike: customUtils.stringToBoolean(req.body.hasBike),
+        hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone)
     }
 
     //TODO : also support additional fields

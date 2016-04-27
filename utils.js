@@ -280,6 +280,20 @@ function stringToBoolean(theString) {
         return false
 }
 
+function myParseInt(string) {
+    if(string===undefined)
+        return undefined
+    else
+        return parseInt(string)
+}
+
+function myParseFloat(string) {
+    if(string===undefined)
+        return undefined
+    else
+        return parseFloat(string)
+}
+
 module.exports = {
     insertDistance : insertDistance,
     sendErrors : sendErrors,
@@ -289,5 +303,7 @@ module.exports = {
     createHashMap : createHashMap,
     upload : upload,
     stringToBoolean : stringToBoolean,
-    getFormattedDate : getFormattedDate
+    getFormattedDate : getFormattedDate,
+    myParseInt : myParseInt,
+    myParseFloat : myParseFloat
 }

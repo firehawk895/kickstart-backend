@@ -125,6 +125,8 @@ function createFuzzyQuery(field, value) {
  * @param fieldPath
  */
 function createExistsQuery(fieldPath) {
+    //escape any spaces in the field path
+    fieldPath = fieldPath.replace(/\s/g, '\\ ')
     return "_exists_:" + fieldPath
 }
 

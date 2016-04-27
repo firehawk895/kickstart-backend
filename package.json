@@ -17,7 +17,7 @@
     "dateformat": "^1.0.12",
     "debug": "*",
     "express": "*",
-    "express-validator": "*",
+    "express-validator": "^2.20.3",
     "firebase": "*",
     "fs": "*",
     "jade": "*",

@@ -5,6 +5,7 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var request = require('request')
+var expressValidator = require('express-validator')
 
 var passport = require('passport');
 var BearerStrategy = require('passport-http-bearer').Strategy;
@@ -89,8 +90,6 @@ passport.use(new BearerStrategy({},
     }
 ));
 
-
-
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
 //app.set('view engine', 'jade');
@@ -124,29 +123,7 @@ app.use(function (req, res, next) {
     next(err);
 });
 
-// error handlers
 
-// development error handler
-//// will print stacktrace
-//if (app.get('env') === 'development') {
-//  app.use(function (err, req, res, next) {
-//    res.status(err.status || 500);
-//    res.send(err);
-//  });
-//}
-//
-//// production error handler
-//// no stacktraces leaked to user
-//app.use(function (err, req, res, next) {
-//  res.status(err.status || 500);
-//  res.send(err);
-//});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-//if (app.get('env') === 'development') {
 app.use(function (err, req, res, next) {
     console.log(err)
     res.status(err.status || 500);
@@ -155,16 +132,7 @@ app.use(function (err, req, res, next) {
         errorObj: err
     });
 });
-//}
 
-// production error handler
-// no stacktraces leaked to user
-//app.use(function(err, req, res, next) {
-//  res.status(err.status || 500);
-//  res.render('error', {
-//    message: err.message,
-//    error: {}
-//  });
-//});
+app.use(expressValidator());
 
 module.exports = app;

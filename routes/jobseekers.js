@@ -78,6 +78,7 @@ router.get('/', function (req, res) {
     console.log(theFinalQuery)
 
     if (isDistanceQuery) {
+        db.newPatchBuilder()
         var distanceQuery = db.newSearchBuilder()
             .collection("jobseekers")
             .limit(limit)
@@ -113,33 +114,6 @@ router.get('/', function (req, res) {
             customUtils.sendErrors([err.body.message], 503, res)
         })
 })
-
-// router.post('/trades', [passport.authenticate('bearer', {session: false}), function (req, res) {
-//     var responseObj = {}
-//     var userId = req.user.results[0].value.id;
-//     var jobseekerId = req.query.id;
-//
-//     //The great hack to not use json as input
-//     var comments = req.body.comments
-//     req.body.comments = undefined
-//
-//     console.log("updating trades")
-//     db.merge("jobseekers", jobseekerId, {
-//         trades: req.body,
-//         hasSelectedTrades: true,
-//         comments: comments
-//         //sportsList: Object.keys(req.body)
-//     })
-//         .then(function (result) {
-//             responseObj["data"] = [];
-//             responseObj["msg"] = "Trades Updated";
-//             res.status(201);
-//             res.json(responseObj);
-//         })
-//         .fail(function (err) {
-//             customUtils.sendErrors([err.body.message], 422, res)
-//         })
-// }])
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var leaderId = req.body.leaderId || req.user.results[0].path.key;

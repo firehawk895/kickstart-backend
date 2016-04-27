@@ -57,7 +57,7 @@ function createEducationQuery(educationLevel) {
 }
 
 function createTradeQuery(trade) {
-    return dbUtils.createExistsQuery("value."+trade)
+    return dbUtils.createExistsQuery("value.trades"+trade)
 }
 
 

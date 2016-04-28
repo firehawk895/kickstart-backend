@@ -28,8 +28,16 @@ function create(leaderId, jobseekerPayload) {
     return createdJobSeekerPromise
 }
 
-function parseTrades() {
-    
+function getTheLeader(jobseekerId) {
+    var leaderId = kew.defer()
+    db.get("jobseekers", jobseekerId)
+        .then(function (jobseeker) {
+            leaderId.resolve(jobseeker.body.leaderId)
+        })
+        .fail(function(err) {
+            leaderId.reject(err)
+        })
+    return leaderId
 }
 
 function incrementInterviews(jobseekerId) {
@@ -40,5 +48,6 @@ function incrementInterviews(jobseekerId) {
 
 module.exports = {
     create: create,
-    incrementInterviews : incrementInterviews
+    incrementInterviews : incrementInterviews,
+    getTheLeader : getTheLeader
 }

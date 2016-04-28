@@ -30,6 +30,7 @@ var passport = require('passport');
 
 //schedule an interview
 router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
+    console.log("kaun ho tum")
     var responseObj = {}
     // var leaderId = req.user.results[0].path.key;
     //use for authorization of leader
@@ -85,6 +86,8 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
                 responseObj["obj"] = errorObj.err
                 res.status(errorObj.statusCode)
                 res.json(responseObj)
+            } else {
+                customUtils.sendErrors(err, res)
             }
         })
 }])

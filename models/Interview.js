@@ -15,11 +15,13 @@ function create(interviewPayload) {
     var compositeKey
     kew.all([
         dbUtils.createGraphRelationPromise("jobseekers", interviewPayload.jobseekerId, "vacancies", interviewPayload.vacancyId, constants.graphsRelations.jobseekers.interviews),
-        dbUtils.createGraphRelationPromise("vacancies", interviewPayload.vacancyId, "jobseekers", interviewPayload.jobseekerId, constants.graphsRelations.vacancies.hasJobSeekers)
+        dbUtils.createGraphRelationPromise("vacancies", interviewPayload.vacancyId, "jobseekers", interviewPayload.jobseekerId, constants.graphsRelations.vacancies.hasJobSeekers),
+        JobseekerModel.getTheLeader(interviewPayload.jobseekerId)
     ])
-        .then(function (result) {
+        .then(function (results) {
             //another cool hack to maintain integrity
             compositeKey = interviewPayload.jobseekerId + interviewPayload.vacancyId
+            interviewPayload["leaderId"] = results[2]
             //succeeds only if absent otherwise throws errors
             return db.put("interviews", compositeKey, interviewPayload, false)
         })

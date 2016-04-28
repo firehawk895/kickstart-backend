@@ -31,7 +31,7 @@ var passport = require('passport');
 //schedule an interview
 router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
     var responseObj = {}
-    var leaderId = req.user.results[0].path.key;
+    // var leaderId = req.user.results[0].path.key;
     //use for authorization of leader
     //only a leader to which the jobseeker belongs to can schedule an interview
     //TODO : who the hell will check for integrity of all these ids
@@ -41,7 +41,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         jobseekerId: req.body.jobseekerId,
         interviewTime: req.body.interviewTime,
         status: constants.interviewStatus.scheduled,
-        leaderId: leaderId //check the get API, you will realize why we have kept this
+        // leaderId: leaderId //better you find the 
     }
     console.log(interviewPayload)
 

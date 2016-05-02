@@ -18,6 +18,8 @@ router.post('/login', function (req, res) {
     var name = req.body.name
     var mobile = req.body.mobile
     var otp = req.body.otp
+    
+    console.log("otp alert --- " + otp)
 
     console.log("the request body")
     console.log(mobile)

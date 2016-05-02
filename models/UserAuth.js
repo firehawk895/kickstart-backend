@@ -28,6 +28,7 @@ function loginLeaderApi(name, mobile, otp) {
     var leaderPayloadPromise = kew.defer()
     var leaderPayload
     var message = "Your OTP : " + otp
+    console.log(message)
     console.log("kewing all")
 
     kew.all([getLeaderByMobile(mobile), customUtils.sendSms(message, mobile)])

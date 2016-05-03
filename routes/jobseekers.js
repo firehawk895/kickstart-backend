@@ -91,11 +91,12 @@ router.get('/', function (req, res) {
          * remove sort by location if query does not have
          * location. the orchestrate query won't work otherwise
          */
+        console.log("ysaaaaa")
         var distanceLessQuery = db.newSearchBuilder()
             .collection("jobseekers")
             .limit(limit)
             .offset(offset)
-            //.sortBy('value.location', 'distance:asc')
+            .sortBy('@path.reftime', 'asc')
             .query(theFinalQuery)
         promises.push(distanceLessQuery)
     }

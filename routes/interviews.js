@@ -178,6 +178,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         .collection("interviews")
         .limit(limit)
         .offset(offset)
+        .sortBy('@path.reftime', 'asc')
         .query(finalQuery)
     promises.push(distanceLessQuery)
 

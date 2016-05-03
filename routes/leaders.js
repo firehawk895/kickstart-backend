@@ -80,6 +80,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         .limit(limit)
         .offset(offset)
         //.sort('location', 'distance:asc')
+        .sortBy('@path.reftime', 'asc')
         .query(theFinalQuery)
         .then(function (results) {
             responseObj["total_count"] = results.body.total_count

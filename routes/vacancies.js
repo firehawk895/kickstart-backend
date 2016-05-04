@@ -36,6 +36,7 @@ router.post('/', function (req, res, next) {
         working_hours: req.body.working_hours, //no. of hours
         interview_date_start: req.body.interview_date_start,//unix timestamp
         interview_date_end: req.body.interview_date_end,//unix timestamp
+        interview_dates: req.body.interview_dates,
         trade : req.body.trade, //dropdown list
         showTop: customUtils.stringToBoolean(req.body.showTop),
         communication: req.body.communication,
@@ -45,6 +46,7 @@ router.post('/', function (req, res, next) {
         hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone)
     }
 
+    //TODO make interview_dates consistently an array
     //TODO : also support additional fields
 
     VacancyModel.create(vacancyPayload)

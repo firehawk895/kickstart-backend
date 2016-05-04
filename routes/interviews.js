@@ -36,6 +36,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
     //use for authorization of leader
     //only a leader to which the jobseeker belongs to can schedule an interview
     //TODO : who the hell will check for integrity of all these ids
+    //TODO : do a validation of the interview dates
 
     var interviewPayload = {
         vacancyId: req.body.vacancyId,

@@ -200,6 +200,7 @@ var emptyOrchestrateResponse = {
 
 function getAllResultsFromList(collection, idList) {
     //how long can the largest lucene query to orchestrate be?
+    //TODO: test the longerst lucene query or this breaks?
     var queries = []
     console.log(idList)
 

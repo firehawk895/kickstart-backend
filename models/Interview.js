@@ -87,11 +87,18 @@ function getLeadersInterviews(leaderId) {
 }
 
 function extractIds(results) {
+    function pushUnique(item, array) {
+        if(array.indexOf(item) > -1) {
+            //dont push
+        } else {
+            array.push(item)
+        }
+    }
     var vacancyIds = []
     var jobseekerIds = []
     results.body.results.forEach(function (item) {
-        vacancyIds.push(item.value.vacancyId)
-        jobseekerIds.push(item.value.jobseekerId)
+        pushUnique(item.value.vacancyId, vacancyIds)
+        pushUnique(item.value.jobseekerId, jobseekerIds)
     })
 
     return {

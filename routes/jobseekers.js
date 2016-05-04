@@ -91,12 +91,11 @@ router.get('/', function (req, res) {
          * remove sort by location if query does not have
          * location. the orchestrate query won't work otherwise
          */
-        console.log("ysaaaaa")
         var distanceLessQuery = db.newSearchBuilder()
             .collection("jobseekers")
             .limit(limit)
             .offset(offset)
-            .sortBy('@path.reftime', 'asc')
+            .sortBy('@path.reftime', 'desc')
             .query(theFinalQuery)
         promises.push(distanceLessQuery)
     }
@@ -106,8 +105,19 @@ router.get('/', function (req, res) {
             if (distanceQuery) {
                 results[0] = customUtils.insertDistance(results[0], req.query.lat, req.query.long)
             }
-            responseObj["total_count"] = results[0].body.total_count
-            responseObj["data"] = dbUtils.injectId(results[0])
+            if (req.query.showLeaders) {
+                return JobseekerModel.injectLeader(results[0])
+            } else {
+                console.log("no injection")
+                return kew.resolve(results[0])
+            }
+        })
+        .then(function (results) {
+            console.log("final results -- ")
+            console.log(results)
+            
+            responseObj["total_count"] = results.body.total_count
+            responseObj["data"] = dbUtils.injectId(results)
             res.status(200)
             res.json(responseObj)
         })
@@ -219,14 +229,14 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             else
                 tradesPayload[trade] = null //ensures an old key is deleted
         })
-        
+
         console.log("hasSelectedTrade : " + hasSelectedTrades)
-        
-        if(hasSelectedTrades) {
+
+        if (hasSelectedTrades) {
             jobSeekerPayload["trades"] = tradesPayload
             jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
         }
-        
+
 
         console.log(jobSeekerPayload)
 

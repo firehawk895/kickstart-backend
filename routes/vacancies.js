@@ -175,7 +175,7 @@ router.get('/', function(req, res) {
             .limit(limit)
             .offset(offset)
             //.sortBy('value.location', 'distance:asc')
-            .sortBy('@path.reftime', 'desc')
+            .sortBy('@path.reftime:desc')
             .query(theFinalQuery)
         promises.push(distanceLessQuery)
     }

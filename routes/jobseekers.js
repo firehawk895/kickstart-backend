@@ -91,11 +91,12 @@ router.get('/', function (req, res) {
          * remove sort by location if query does not have
          * location. the orchestrate query won't work otherwise
          */
+        console.log("definitely here")
         var distanceLessQuery = db.newSearchBuilder()
             .collection("jobseekers")
             .limit(limit)
             .offset(offset)
-            .sortBy('@path.reftime', 'desc')
+            .sortBy('@path.reftime:desc')
             .query(theFinalQuery)
         promises.push(distanceLessQuery)
     }
@@ -113,9 +114,6 @@ router.get('/', function (req, res) {
             }
         })
         .then(function (results) {
-            console.log("final results -- ")
-            console.log(results)
-            
             responseObj["total_count"] = results.body.total_count
             responseObj["data"] = dbUtils.injectId(results)
             res.status(200)

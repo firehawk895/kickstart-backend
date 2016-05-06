@@ -66,6 +66,13 @@ function validatePostVacancy(req) {
     return customUtils.validateMe(req, vacancyValidation, sanitizePayload)
 }
 
+function validatePatchVacancy(req) {
+    var vacancyValidation = require('../validations/vacancies')
+    var patchSchema = customUtils.schemaConverter(vacancyValidation)
+    console.log(patchSchema)
+    return customUtils.validateMe(req, patchSchema, sanitizePayload)
+}
+
 var sanitizePayload = function (reqBody) {
     var vacancyPayload = {
         jobTitle : reqBody.jobTitle,//
@@ -99,6 +106,12 @@ var sanitizePayload = function (reqBody) {
         hasBike: customUtils.stringToBoolean(reqBody.hasBike),
         hasSmartphone: customUtils.stringToBoolean(reqBody.hasSmartphone)
     }
+
+    //if only 1 interview date then make sure it is converted to an array
+    if (vacancyPayload.interview_dates && !Array.isArray(vacancyPayload.interview_dates)) {
+        vacancyPayload.interview_dates = [vacancyPayload.interview_dates]
+    }
+
     return vacancyPayload
 }
 
@@ -108,5 +121,6 @@ module.exports = {
     createAgeQuery: createAgeQuery,
     createEducationQuery: createEducationQuery,
     createTradeQuery: createTradeQuery,
-    validatePostVacancy : validatePostVacancy
+    validatePostVacancy : validatePostVacancy,
+    validatePatchVacancy : validatePatchVacancy
 }

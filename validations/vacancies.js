@@ -9,114 +9,119 @@ module.exports = {
         errorMessage: 'company cannot be empty'
     },
     'salary_min': {
-        notEmpty: true,
+        optional: undefined,
         isInt: {
             errorMessage: 'Minimum salary cannot be empty'
         }
     },
     'salary_max': {
-        notEmpty: true,
+        optional: undefined,
         isInt: {
             errorMessage: 'Maximum salary cannot be empty'
         }
     },
     'food_accommodation': {
-        notEmpty: true,
+        optional: undefined,
         isBoolean: {
             errorMessage: 'Food/Accomodation must be true/false'
         }
     },
     'educationLevel': {
-        // notEmpty: true,
+        optional: undefined,
         isIn: {
             options: [Object.keys(constants.education)],
             errorMessage: 'Please enter a valid education level : ' + Object.keys(constants.education)
         }
     },
     'pfesi': {
-        notEmpty: true,
+        optional: undefined,
         isBoolean: {
             errorMessage: 'Food/Accommodation must be true/false'
         }
     },
     'guarantee_time': {
-        notEmpty: true,
+        optional: undefined,
         isInt: {
             errorMessage: 'Enter a valid guarantee time'
         }
     },
     'display_location': {
+        optional: undefined,
         notEmpty: true,
         errorMessage: "Display location cannot be empty"
     },
     'location_name': {
+        optional: undefined,
         notEmpty: true,
         errorMessage: "Location cannot be empty"
     },
     'lat': {
-        notEmpty: true,
+        optional: undefined,
         isLatLong: {
             errorMessage: "Enter a valid latitude"
         }
     },
     'long': {
-        notEmpty: true,
+        optional: undefined,
         isLatLong: {
             errorMessage: "Enter a valid longitude"
         }
     },
     'working_hours': {
-        notEmpty: true,
+        optional: undefined,
         isInt: {
             errorMessage: 'working_hours cannot be empty'
         }
     },
     'interview_dates': {
+        optional: undefined,
         isValidInterviewDate: {
             errorMessage: "Make sure all interview dates are valid"
         }
     },
     'trade': {
+        optional: undefined,
         isIn: {
             options: [constants.trades],
             errorMessage: "Please enter a valid trade"
         }
     },
     'showTop': {
+        optional: undefined,
         optional: true,
         isBoolean: {
             showTop: "showTop must be true/false"
         }
     },
     'communication': {
-        notEmpty: true,
+        optional: undefined,
         isIn: {
             options: [Object.keys(constants.communication)],
             errorMessage: "Enter valid communication data"
         }
     },
     'license': {
-        optional: true,
+        optional: undefined,
         isIn: {
             options: [Object.keys(constants.license)],
             errorMessage: 'Please enter a valid education level'
         }
     },
     'computer': {
-        optional: true,
+        optional: undefined,
         isIn: {
             options : [Object.keys(constants.computer)],
             errorMessage: "Enter a valid Computer profieciency"
         }
     },
     'hasBike': {
-        optional: true,
+        optional: undefined,
         isBoolean: {
             errorMessage: "hasBike must be true/false"
         }
     },
     'hasSmartphone': {
-        optional: true,
+        optional: undefined,
         isBoolean: {
             errorMessage: "hasSmartphone must be true/false"
         }

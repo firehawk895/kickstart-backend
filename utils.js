@@ -312,6 +312,13 @@ function stringToBoolean(theString) {
         return false
 }
 
+/**
+ * use this for sanitizing
+ * a patch request will return undefined
+ * that case is handled here
+ * @param string
+ * @returns {*}
+ */
 function myParseInt(string) {
     if(string===undefined)
         return undefined
@@ -319,11 +326,34 @@ function myParseInt(string) {
         return parseInt(string)
 }
 
+/**
+ * use this for sanitizing
+ * a patch request will return undefined
+ * that case is handled here
+ * @param string
+ * @returns {*}
+ */
 function myParseFloat(string) {
     if(string===undefined)
         return undefined
     else
         return parseFloat(string)
+}
+
+/**
+ * converts a POST schema to a PATCH schema
+ * pretty neat huh?
+ * @param schema
+ * @returns {*}
+ */
+function schemaConverter(schema) {
+    console.log("BOOM")
+    var theKeys = Object.keys(schema)
+    theKeys.forEach(function(theKey) {
+        delete schema[theKey]["notEmpty"]
+        schema[theKey]["optional"] = true
+    })
+    return schema
 }
 
 module.exports = {
@@ -338,5 +368,6 @@ module.exports = {
     getFormattedDate : getFormattedDate,
     myParseInt : myParseInt,
     myParseFloat : myParseFloat,
-    validateMe : validateMe
+    validateMe : validateMe,
+    schemaConverter : schemaConverter
 }

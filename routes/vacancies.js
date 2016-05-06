@@ -14,9 +14,6 @@ var constants = require('../constants')
 var passport = require('passport')
 
 router.post('/', function (req, res, next) {
-    //TODO make interview_dates consistently an array
-    //TODO : also support additional fields
-
     console.log(Object.keys(constants.education))
 
     var validations = VacancyModel.validatePostVacancy(req)
@@ -45,20 +42,30 @@ router.patch('/', function (req, res, next) {
     var id = req.query.id
     //TODO : also support additional fields
 
-    db.merge("vacancies", id, vacancyPayload)
-        .then(function(res) {
-            return db.get("vacancies", id)
-        })
-        .then(function(vacancy) {
-            vacancy["id"] = id
-            res.send({
-                data: [vacancy]
+    var validations = VacancyModel.validatePatchVacancy(req)
+    var errors = validations.errors
+    var vacancyPayload = validations.req.body
+
+    if(errors) {
+        customUtils.sendErrors(errors, res)
+    } else {
+        console.log("all cool")
+        db.merge("vacancies", id, vacancyPayload)
+            .then(function(res) {
+                return db.get("vacancies", id)
             })
-            res.status(200)
-        })
-        .fail(function(err) {
-            customUtils.sendErrors(err, res)
-        })
+            .then(function(vacancy) {
+                var theVacancy = vacancy.body
+                theVacancy["id"] = id
+                res.send({
+                    data: [theVacancy]
+                })
+                res.status(200)
+            })
+            .fail(function(err) {
+                customUtils.sendErrors(err, res)
+            })
+    }
 })
 
 router.get('/', function(req, res) {

@@ -11,6 +11,7 @@ var passport = require('passport');
 var BearerStrategy = require('passport-http-bearer').Strategy;
 
 var config = require('./config.js');
+var customValidations = require('./validations/custom')
 //----------------------------- Start Extended Validators --------------------------------------
 var validator = require('validator');
 
@@ -46,6 +47,7 @@ app.use(morgan('dev'))
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(expressValidator(customValidations));
 
 app.use(passport.initialize());
 

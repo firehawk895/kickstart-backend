@@ -63,16 +63,10 @@ function createTradeQuery(trade) {
 
 function validatePostVacancy(req) {
     var vacancyValidation = require('../validations/vacancies')
-    req.checkBody(vacancyValidation)
-    var returnPayload = {
-        errors : req.validationErrors()
-    }
-    if(!req.validationErrors()) {
-        returnPayload["reqBody"] = sanitizePayload(req.body)
-    }
+    return customUtils.validateMe(req, vacancyValidation, sanitizePayload)
 }
 
-function sanitizePayload(reqBody) {
+var sanitizePayload = function (reqBody) {
     var vacancyPayload = {
         jobTitle : reqBody.jobTitle,//
         compulsoryReqs: reqBody.compulsoryReqs, //text

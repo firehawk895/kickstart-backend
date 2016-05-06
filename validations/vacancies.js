@@ -20,17 +20,17 @@ module.exports = {
             errorMessage: 'Maximum salary cannot be empty'
         }
     },
-    'food_accomodation': {
+    'food_accommodation': {
         notEmpty: true,
         isBoolean: {
             errorMessage: 'Food/Accomodation must be true/false'
         }
     },
     'educationLevel': {
-        notEmpty: true,
+        // notEmpty: true,
         isIn: {
-            options: constants.education,
-            errorMessage: 'Please enter a valid education level'
+            options: [Object.keys(constants.education)],
+            errorMessage: 'Please enter a valid education level : ' + Object.keys(constants.education)
         }
     },
     'pfesi': {
@@ -72,15 +72,13 @@ module.exports = {
         }
     },
     'interview_dates': {
-        notEmpty: true,
-        isInt: {
+        isValidInterviewDate: {
             errorMessage: "Make sure all interview dates are valid"
         }
     },
     'trade': {
-        
         isIn: {
-            options: constants.trades,
+            options: [constants.trades],
             errorMessage: "Please enter a valid trade"
         }
     },
@@ -93,21 +91,21 @@ module.exports = {
     'communication': {
         notEmpty: true,
         isIn: {
-            options: constants.communication,
+            options: [Object.keys(constants.communication)],
             errorMessage: "Enter valid communication data"
         }
     },
     'license': {
         optional: true,
         isIn: {
-            options: constants.license,
+            options: [Object.keys(constants.license)],
             errorMessage: 'Please enter a valid education level'
         }
     },
     'computer': {
         optional: true,
         isIn: {
-            options : constants.computer,
+            options : [Object.keys(constants.computer)],
             errorMessage: "Enter a valid Computer profieciency"
         }
     },

@@ -17,31 +17,32 @@ router.post('/', function (req, res, next) {
     //TODO make interview_dates consistently an array
     //TODO : also support additional fields
 
-    var validations = VacancyModel.validatePostVacancy(req)
-    if(validations.errors) {
-        console.log(validations.errors)
-    } else {
-        console.log("wooo hoo")
-    }
+    console.log(Object.keys(constants.education))
 
-    // VacancyModel.create(vacancyPayload)
-    //     .then(function(response) {
-    //         vacancyPayload["id"] = dbUtils.getIdAfterPost(response)
-    //         res.send({
-    //             data: vacancyPayload
-    //         })
-    //         res.status(200)
-    //         eventSystem.dispatch(constants.events.newVacancy, vacancyPayload)
-    //     })
-    //     .fail(function(err) {
-    //         customUtils.sendErrors(err, 422, res)
-    //     })
+    var validations = VacancyModel.validatePostVacancy(req)
+    var errors = validations.errors
+    var vacancyPayload = validations.req.body
+
+    if(errors) {
+        customUtils.sendErrors(errors, res)
+    } else {
+        VacancyModel.create(vacancyPayload)
+            .then(function(response) {
+                vacancyPayload["id"] = dbUtils.getIdAfterPost(response)
+                res.send({
+                    data: vacancyPayload
+                })
+                res.status(200)
+                eventSystem.dispatch(constants.events.newVacancy, vacancyPayload)
+            })
+            .fail(function(err) {
+                customUtils.sendErrors(err, res)
+            })
+    }
 })
 
 router.patch('/', function (req, res, next) {
     var id = req.query.id
-
-
     //TODO : also support additional fields
 
     db.merge("vacancies", id, vacancyPayload)
@@ -156,7 +157,7 @@ router.delete('/', [passport.authenticate('bearer', {session: false}), function 
     var vacancyId = req.query.id
 
     db.remove('vacancy', vacancyId, true)
-        .then(function (result) {
+        .then(function (result) {x
             res.send({
                 data: {}
             })

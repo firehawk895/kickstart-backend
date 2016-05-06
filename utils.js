@@ -163,6 +163,38 @@ function sendSms(message, phoneNumber) {
     return sentStatus
 }
 
+function validateMe(req, schema, sanitizer) {
+    try {
+        req.checkBody(schema)
+    }
+    catch(e) {
+        //TODO: dont swallow exceptions!
+        console.log("-------Exception")
+        console.log(e)
+        return {
+            errors : ["Keys are missing in the request"],
+            req: {
+                body : {
+                    
+                }
+            }
+        }
+    }
+    
+    var returnPayload = {
+        errors : req.validationErrors(),
+        req : {
+            body : {
+                
+            }
+        }
+    }
+    if(!req.validationErrors()) {
+        returnPayload["req"]["body"] = sanitizer(req.body)
+    }
+    return returnPayload
+}
+
 /**
  * Generate an access token for login
  * refer http://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
@@ -305,5 +337,6 @@ module.exports = {
     stringToBoolean : stringToBoolean,
     getFormattedDate : getFormattedDate,
     myParseInt : myParseInt,
-    myParseFloat : myParseFloat
+    myParseFloat : myParseFloat,
+    validateMe : validateMe
 }

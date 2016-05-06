@@ -4,6 +4,7 @@ oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var dbUtils = require('../dbUtils')
 var constants = require('../constants')
+var customUtils = require('../utils')
 
 var date = new Date();
 var kew = require('kew');
@@ -60,10 +61,58 @@ function createTradeQuery(trade) {
     return dbUtils.createExistsQuery("value.trades."+trade)
 }
 
+function validatePostVacancy(req) {
+    var vacancyValidation = require('../validations/vacancies')
+    req.checkBody(vacancyValidation)
+    var returnPayload = {
+        errors : req.validationErrors()
+    }
+    if(!req.validationErrors()) {
+        returnPayload["reqBody"] = sanitizePayload(req.body)
+    }
+}
+
+function sanitizePayload(reqBody) {
+    var vacancyPayload = {
+        jobTitle : reqBody.jobTitle,//
+        compulsoryReqs: reqBody.compulsoryReqs, //text
+        preferredReqs: reqBody.preferredReqs, //text
+        company : reqBody.company,//company dropdown list
+        salary_min : customUtils.myParseInt(reqBody.salary_min), //unsigned int whole number
+        salary_max : customUtils.myParseInt(reqBody.salary_max),//unsigned int whole number
+        food_accommodation : customUtils.stringToBoolean(reqBody.food_accommodation),//bool
+        educationLevel : reqBody.educationLevel,//dropdown list
+        pfesi: reqBody.pfesi, //bool
+        guarantee_time : reqBody.guarantee_time, //right now in days
+        comments : reqBody.comments,
+        age_min : customUtils.myParseInt(reqBody.age_min), //unsigned int
+        age_max : customUtils.myParseInt(reqBody.age_max), //unsigned int
+        display_location : reqBody.display_location,//
+        location_name : reqBody.location_name,//
+        location : {
+           lat : customUtils.myParseFloat(reqBody.lat),//usual lat
+           long : customUtils.myParseFloat(reqBody.long)//usual long
+        },
+        working_hours: reqBody.working_hours, //no. of hours
+        // interview_date_start: reqBody.interview_date_start,//unix timestamp
+        // interview_date_end: reqBody.interview_date_end,//unix timestamp
+        interview_dates: reqBody.interview_dates,
+        trade : reqBody.trade, //dropdown list
+        showTop: customUtils.stringToBoolean(reqBody.showTop),
+        communication: reqBody.communication,
+        license: reqBody.license,
+        computer: reqBody.computer,
+        hasBike: customUtils.stringToBoolean(reqBody.hasBike),
+        hasSmartphone: customUtils.stringToBoolean(reqBody.hasSmartphone)
+    }
+    return vacancyPayload
+}
+
 
 module.exports = {
     create: create,
     createAgeQuery: createAgeQuery,
     createEducationQuery: createEducationQuery,
     createTradeQuery: createTradeQuery,
+    validatePostVacancy : validatePostVacancy
 }

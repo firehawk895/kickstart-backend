@@ -1,4 +1,5 @@
 var validator = require('validator')
+var UserAuthModel = require('../models/UserAuth')
 module.exports = {
     customValidators: {
         isLatLong: function (latOrLong) {
@@ -25,6 +26,20 @@ module.exports = {
                 result = validator.isInt(value)
             }
             return result
+        },
+        isNewUser : function(mobile) {
+            console.log("isNewUser time")
+            return new Promise(function (resolve, reject) {
+                UserAuthModel.checkIfNewUser(mobile)
+                    .then(function (results) {
+                        console.log("resolved and fucekd")
+                        resolve(results)
+                    })
+                    .fail(function(err) {
+                        console.log("rejected and proceeds")
+                        reject(err)
+                    })
+            })
         }
     }
 }

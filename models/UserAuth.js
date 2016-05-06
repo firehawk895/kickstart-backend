@@ -129,7 +129,6 @@ function signUpLeader(name, mobile) {
     db.post("users", user)
         .then(function (result) {
             user["id"] = dbUtils.getIdAfterPost(result)
-            //user["id"] = dbUtils.getIdAfterPost(result)
             newLeader.resolve(user)
         })
         .fail(function (err) {
@@ -270,5 +269,7 @@ function updateLastSeen(userId) {
 module.exports = {
     loginLeaderApi: loginLeaderApi,
     signUpAdmin: signUpAdmin,
-    loginAdmin: loginAdmin
+    loginAdmin: loginAdmin,
+    signUpLeader : signUpLeader,
+    checkIfNewUser : checkIfNewUser
 }

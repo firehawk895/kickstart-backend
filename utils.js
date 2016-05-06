@@ -135,9 +135,9 @@ function getErrors(err) {
         console.log("koi nae, non standard error hai")
     } finally {
         return {
-            errorsArray : errorsArray,
-            err : err,
-            statusCode : statusCode
+            errorsArray: errorsArray,
+            err: err,
+            statusCode: statusCode
         }
     }
 }
@@ -167,32 +167,70 @@ function validateMe(req, schema, sanitizer) {
     try {
         req.checkBody(schema)
     }
-    catch(e) {
+    catch (e) {
         //TODO: dont swallow exceptions!
         console.log("-------Exception")
         console.log(e)
         return {
-            errors : ["Keys are missing in the request"],
+            errors: ["Keys are missing in the request"],
             req: {
-                body : {
-                    
-                }
+                body: {}
             }
         }
     }
-    
+
     var returnPayload = {
-        errors : req.validationErrors(),
-        req : {
-            body : {
-                
-            }
+        errors: req.validationErrors(),
+        req: {
+            body: {}
         }
     }
-    if(!req.validationErrors()) {
+    if (!req.validationErrors()) {
         returnPayload["req"]["body"] = sanitizer(req.body)
     }
     return returnPayload
+}
+
+function validateMePromise(req, schema, sanitizer) {
+    var returnPayloadPromise = kew.defer()
+    try {
+        req.checkBody(schema)
+        req.asyncValidationErrors()
+            .then(function (results) {
+                var returnPayload = {
+                    errors: false,
+                    req: {
+                        body: {}
+                    }
+                }
+                returnPayload["req"]["body"] = sanitizer(req.body)
+                returnPayloadPromise.resolve(returnPayload)
+            })
+            .catch(function (errors) {
+                var returnPayload = {
+                    errors: errors,
+                    req: {
+                        body: {}
+                    }
+                }
+                if (!errors) {
+                    returnPayload["req"]["body"] = sanitizer(req.body)
+                }
+                returnPayloadPromise.resolve(returnPayload)
+            })
+    }
+    catch (e) {
+        //TODO: dont swallow exceptions!
+        console.log("-------Exception")
+        console.log(e)
+        returnPayloadPromise.resolve({
+            errors: ["Keys are missing in the request"],
+            req: {
+                body: {}
+            }
+        })
+    }
+    return returnPayloadPromise
 }
 
 /**
@@ -219,7 +257,7 @@ function generateToken(length) {
  */
 function getFormattedDate(unix_timestamp) {
     var date = new Date(unix_timestamp * 1000);
-    
+
 // Hours part from the timestamp
     var hours = date.getHours();
 // Minutes part from the timestamp
@@ -228,7 +266,7 @@ function getFormattedDate(unix_timestamp) {
     var seconds = "0" + date.getSeconds();
 
 // Will display time in 10:30:23 format
-    var formattedTime = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + ", " +  hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    var formattedTime = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + ", " + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
     return formattedTime
 }
 
@@ -252,18 +290,18 @@ var insertDistance = function (results, usersLat, usersLong) {
     return results
 }
 
-var createHashMap = function(results) {
+var createHashMap = function (results) {
     var theMap = {}
     try {
         console.log("inside createhashMap")
         console.log(results)
         var injectedResults = dbUtils.injectId(results)
         console.log("injected")
-        injectedResults.forEach(function(result) {
+        injectedResults.forEach(function (result) {
             theMap[result.id] = result
         })
         return theMap
-    } catch(e) {
+    } catch (e) {
         request.post(config.newSlack.feedbackHook, {
             body: JSON.stringify({text: "*$" + e + "*"})
         })
@@ -304,7 +342,7 @@ function upload(file, callback) {
 }
 
 function stringToBoolean(theString) {
-    if(theString === undefined)
+    if (theString === undefined)
         return undefined
     if (theString == "true")
         return true
@@ -320,7 +358,7 @@ function stringToBoolean(theString) {
  * @returns {*}
  */
 function myParseInt(string) {
-    if(string===undefined)
+    if (string === undefined)
         return undefined
     else
         return parseInt(string)
@@ -334,7 +372,7 @@ function myParseInt(string) {
  * @returns {*}
  */
 function myParseFloat(string) {
-    if(string===undefined)
+    if (string === undefined)
         return undefined
     else
         return parseFloat(string)
@@ -349,7 +387,7 @@ function myParseFloat(string) {
 function schemaConverter(schema) {
     console.log("BOOM")
     var theKeys = Object.keys(schema)
-    theKeys.forEach(function(theKey) {
+    theKeys.forEach(function (theKey) {
         delete schema[theKey]["notEmpty"]
         schema[theKey]["optional"] = true
     })
@@ -357,17 +395,18 @@ function schemaConverter(schema) {
 }
 
 module.exports = {
-    insertDistance : insertDistance,
-    sendErrors : sendErrors,
-    getErrors : getErrors,
-    sendSms : sendSms,
-    generateToken : generateToken,
-    createHashMap : createHashMap,
-    upload : upload,
-    stringToBoolean : stringToBoolean,
-    getFormattedDate : getFormattedDate,
-    myParseInt : myParseInt,
-    myParseFloat : myParseFloat,
-    validateMe : validateMe,
-    schemaConverter : schemaConverter
+    insertDistance: insertDistance,
+    sendErrors: sendErrors,
+    getErrors: getErrors,
+    sendSms: sendSms,
+    generateToken: generateToken,
+    createHashMap: createHashMap,
+    upload: upload,
+    stringToBoolean: stringToBoolean,
+    getFormattedDate: getFormattedDate,
+    myParseInt: myParseInt,
+    myParseFloat: myParseFloat,
+    validateMe: validateMe,
+    validateMePromise: validateMePromise,
+    schemaConverter: schemaConverter
 }

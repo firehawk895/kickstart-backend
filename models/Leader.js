@@ -22,6 +22,29 @@ function getLeadersJobseekers(leaderId) {
     return jobseekerPromise
 }
 
+function validatePostLeaderPromise(req) {
+    var leaderValidation = require('../validations/leader')
+    console.log(leaderValidation)
+    return customUtils.validateMePromise(req, leaderValidation, sanitizePayload)
+}
+
+function validatePatchLeaderPromise(req) {
+    var leaderValidation = require('../validations/leader')
+    var patchSchema = customUtils.schemaConverter(leaderValidation)
+    return customUtils.validateMePromise(req, patchSchema, sanitizePayload)
+}
+
+var sanitizePayload = function (reqBody) {
+    var leaderPayload = {
+        name : reqBody.name,
+        mobile : reqBody.mobile,
+        isVerified: customUtils.stringToBoolean(reqBody.isVerified)
+    }
+    return leaderPayload
+}
+
 module.exports = {
-    getLeadersJobseekers : getLeadersJobseekers
+    getLeadersJobseekers : getLeadersJobseekers,
+    validatePostLeaderPromise : validatePostLeaderPromise,
+    validatePatchLeaderPromise : validatePatchLeaderPromise
 }

@@ -1,10 +1,18 @@
+/**
+ * I have no clue why
+ * I need to put optional : undefined 
+ * for the patch converted schema to work
+ * do let me know if you ever find out
+ */
 var constants = require('../constants')
 module.exports = {
     'jobTitle': {
+        optional: undefined,
         notEmpty: true,
         errorMessage: 'jobTitle cannot be empty'
     },
     'company': {
+        optional: undefined,
         notEmpty: true,
         errorMessage: 'company cannot be empty'
     },

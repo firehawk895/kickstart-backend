@@ -18,7 +18,7 @@ router.post('/login', function (req, res) {
     var name = req.body.name
     var mobile = req.body.mobile
     var otp = req.body.otp
-    
+
     console.log("otp alert --- " + otp)
 
     console.log("the request body")
@@ -36,29 +36,71 @@ router.post('/login', function (req, res) {
         })
 })
 
-router.patch('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
-    var sanitizedPayload = {
-        name : req.body.name,
-        mobile : req.body.mobile,
-        isVerified: customUtils.stringToBoolean(req.body.isVerified)
-    }
-    
-    var responseObj = {}
-    db.merge('users', req.query.id, sanitizedPayload)
-        .then(function (result) {
-            sanitizedPayload["id"] = result.headers.location.match(/[0-9a-z]{16}/)[0];
-            responseObj["data"] = sanitizedPayload
-            res.status(201);
-            res.json(responseObj);
+router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
+    LeaderModel.validatePostLeaderPromise(req)
+        .then(function (validations) {
+            var errors = validations.errors
+            var leaderPayload = validations.req.body
+
+            console.log("inside then of validatePostLeaderPromise")
+            if (errors) {
+                customUtils.sendErrors(errors, res)
+            } else {
+                UserAuthModel.signUpLeader(leaderPayload.name, leaderPayload.mobile)
+                    .then(function (response) {
+                        res.send({
+                            data: response
+                        })
+                        res.status(200)
+                    })
+                    .fail(function (err) {
+                        customUtils.sendErrors(err, res)
+                    })
+            }
         })
         .fail(function (err) {
-            customUtils.send(err, res)
+            console.log("limbo")
+            console.log(err)
+        })
+}])
+
+router.patch('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
+    LeaderModel.validatePatchLeaderPromise(req)
+        .then(function (validations) {
+            var errors = validations.errors
+            var sanitizedPayload = validations.req.body
+
+            if (errors) {
+                customUtils.sendErrors(errors, res)
+            } else {
+                db.merge('users', req.query.id, sanitizedPayload)
+                    .then(function (result) {
+                        return db.get("users", req.query.id)
+                    })
+                    .then(function (result) {
+                        console.log("whats up here")
+                        var theLeader = result.body
+                        theLeader["id"] = req.query.id
+                        
+                        res.send({
+                            data: [theLeader]
+                        })
+                        res.status(201)
+                    })
+                    .fail(function (err) {
+                        customUtils.send(err, res)
+                    })
+            }
+        })
+        .fail(function (err) {
+            console.log("limbo")
+            console.log(err)
         })
 }])
 
 router.get('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
     var limit = req.query.limit || 100
-    var page =  req.query.page || 1
+    var page = req.query.page || 1
     var offset = limit * (page - 1)
 
     console.log(limit)
@@ -97,11 +139,11 @@ router.delete('/', [passport.authenticate('bearer', {session: false}), function 
     var id = req.query.id
 
     db.remove('users', id, true)
-        .then(function(result) {
+        .then(function (result) {
             res.status(200);
-            res.json({data:{}, msg : "Delete successful"});
+            res.json({data: {}, msg: "Delete successful"});
         })
-        .fail(function(err) {
+        .fail(function (err) {
             console.log("Error")
             console.log(err)
             customUtils.sendErrors(err, res)

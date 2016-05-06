@@ -14,8 +14,6 @@ var constants = require('../constants')
 var passport = require('passport')
 
 router.post('/', function (req, res, next) {
-    console.log(Object.keys(constants.education))
-
     var validations = VacancyModel.validatePostVacancy(req)
     var errors = validations.errors
     var vacancyPayload = validations.req.body
@@ -60,7 +58,7 @@ router.patch('/', function (req, res, next) {
                 res.send({
                     data: [theVacancy]
                 })
-                res.status(200)
+                res.status(201)
             })
             .fail(function(err) {
                 customUtils.sendErrors(err, res)

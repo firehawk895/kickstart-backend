@@ -67,8 +67,7 @@ function validatePostVacancy(req) {
 }
 
 function validatePatchVacancy(req) {
-    var vacancyValidation = require('../validations/vacancies')
-    var patchSchema = customUtils.schemaConverter(vacancyValidation)
+    var patchSchema = require('../validations/vacancies_patch')
     console.log(patchSchema)
     return customUtils.validateMe(req, patchSchema, sanitizePayload)
 }

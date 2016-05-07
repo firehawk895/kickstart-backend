@@ -12,8 +12,10 @@ var kew = require('kew');
 var eventSystem = require('../listeners/listeners')
 var constants = require('../constants')
 var passport = require('passport')
+var multer = require('multer');
 
-router.post('/', function (req, res, next) {
+router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
+    console.log(req.body)
     var validations = VacancyModel.validatePostVacancy(req)
     var errors = validations.errors
     var vacancyPayload = validations.req.body
@@ -34,9 +36,9 @@ router.post('/', function (req, res, next) {
                 customUtils.sendErrors(err, res)
             })
     }
-})
+}])
 
-router.patch('/', function (req, res, next) {
+router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var id = req.query.id
     //TODO : also support additional fields
 
@@ -64,7 +66,7 @@ router.patch('/', function (req, res, next) {
                 customUtils.sendErrors(err, res)
             })
     }
-})
+}])
 
 router.get('/', function(req, res) {
     var promises = []

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "forever --watch --fifo start ./bin/www"
   },
   "dependencies": {
     "bcryptjs": "*",
@@ -35,6 +35,7 @@
     "random-string": "*",
     "request": "*",
     "s3fs": "*",
-    "validator": "*"
+    "validator": "*",
+    "forever": "0.15.1"
   }
 }

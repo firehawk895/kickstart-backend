@@ -1,58 +1,50 @@
 var constants = require('../constants')
 module.exports = {
     'name': {
-        notEmpty: true,
-        errorMessage: 'Name cannot be empty'
+        notEmpty: {
+            errorMessage: 'Name cannot be empty'
+        }
     },
-    'mobile': {
-        notEmpty: true,
-        errorMessage: 'Mobile cannot be empty',
+    'mobile': {//
         isMobilePhone: {
             options: ['en-IN'],
             errorMessage: 'Enter a valid Indian mobile number'
+        },
+        isNewJobseeker: {
+            errorMessage: 'Jobseeker mobile already registered'
         }
     },
     'educationLevel': {
-        notEmpty: true,
         isIn: {
-            options: constants.education,
+            options: [Object.keys(constants.education)],
             errorMessage: 'Please enter a valid education level'
         }
     },
     'location_name': {
-        notEmpty: true,
+        optional : true,
         errorMessage: "Location name cannot be empty"
     },
     'lat': {
-        notEmpty: true,
-        isLatLong: {
-            errorMessage: "Enter a valid lat/long"
+        optional: true,
+        isLat: {
+            errorMessage: "Enter a valid lattitude"
         }
     },
-    'long': {
-        notEmpty: true,
-        isLatLong: {
-            errorMessage: "Enter a valid lat/long"
-        }
-    },
-    'long': {
-        notEmpty: true,
-        isLatLong: {
-            errorMessage: "Enter a valid lat/long"
+    'long': {//
+        optional: true,
+        isLong: {
+            errorMessage: "Enter a valid longitude"
         }
     },
     'gender': {
-        notEmpty: true,
         isIn: {
             options: constants.gender,
-            errorMessage: 'Please enter a valid education level'
+            errorMessage: 'Please enter a valid gender'
         }
     },
     'dateOfBirth': {
-        notEmpty: true,
         isInt: {
-            options: constants.unixTimeStampRange,
-            errorMessage: "Please enter a valid dateOfBirth (unixtimestamp) in seconds"
+            errorMessage: "Please enter a valid date of birth"
         }
     },
     'lastSalary': {
@@ -62,9 +54,9 @@ module.exports = {
         }
     },
     'communication': {
-        notEmpty: true,
+        optional: true,
         isIn: {
-            options: constants.communication,
+            options: [Object.keys(constants.communication)],
             errorMessage: "Enter valid communication data"
         }
     },
@@ -77,8 +69,8 @@ module.exports = {
     'license': {
         optional: true,
         isIn: {
-            options: constants.license,
-            errorMessage: 'Please enter a valid education level'
+            options: [Object.keys(constants.license)],
+            errorMessage: 'Please enter a valid license status'
         }
     },
     'hasSmartphone': {
@@ -90,27 +82,14 @@ module.exports = {
     'computer': {
         optional: true,
         isIn: {
-            options : constants.computer,
+            options : [Object.keys(constants.computer)],
             errorMessage: "Enter a valid Computer profieciency"
         }
     },
     'avatar': {
         optional: true,
         isImage: {
-
+            errorMessage: "File should be a valid image"
         }
-    }
-
-
-    // 'educationLevel': {
-    //     notEmpty:  true,
-    //     isIn: {
-    //         options : Object.keys(constants.education)
-    //     },
-    //     errorMessage: 'Enter a valid education level'
-    // },
-    // 'location_name': {
-    //     notEmpty: true,
-    //     errorMessage: "Enter a location name"
-    // }
+    },
 }

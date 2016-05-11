@@ -90,5 +90,10 @@ module.exports = {
     },
     events: {
         newVacancy: "newVacancy"
-    }
+    },
+    gender : [
+        "Male",
+        "Female",
+        "Other"
+    ]
 }

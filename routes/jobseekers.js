@@ -128,6 +128,11 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
     var leaderId = req.body.leaderId || req.user.results[0].path.key;
     var otp = req.body.otp
     var hasSelectedTrades = false
+
+    var validations = VacancyModel.validatePostVacancy(req)
+    var errors = validations.errors
+    var vacancyPayload = validations.req.body
+
     customUtils.upload(req.files.avatar, function (theImageInS3) {
         console.log(theImageInS3)
         var jobSeekerPayload = {
@@ -145,13 +150,12 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
             hasSelectedTrades: false,
             dateOfBirth: parseInt(req.body.dateOfBirth),
             lastSalary: req.body.lastSalary,
-            jobStatus: req.body.jobStatus,
             communication: req.body.communication,
             hasBike: customUtils.stringToBoolean(req.body.hasBike),
             license: req.body.license,
             hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone),
             computer: req.body.computer,
-            // trades: {},
+            trades: {},
             comments: req.body.comments,
             leaderId: leaderId, //denormalized for easy search, but graph relationships included
             avatar: ((theImageInS3) ? theImageInS3.url : ""),
@@ -159,10 +163,10 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
         }
 
         constants.trades.forEach(function (trade) {
-            if (req.body[trade])
+            if (req.body[trade]) {
                 hasSelectedTrades = true
-            if (req.body[trade])
                 jobSeekerPayload["trades"][trade] = req.body[trade]
+            }
         })
         jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
 

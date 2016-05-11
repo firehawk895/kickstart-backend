@@ -1,21 +1,19 @@
 var constants = require('../constants')
 module.exports = {
     'name': {
-        optional : true,
         notEmpty: {
             errorMessage: 'name cannot be empty',
         }
     },
     'location_name': {
-        optional: true,
         notEmpty : {
-            errorMessage: 'Please enter location for the leader'
+            errorMessage : "Please enter location for the leader"
         }
     },
     'lat': {//
         optional: true,
         isLat: {
-            errorMessage: "Enter a valid latitude"
+            errorMessage: "Enter a valid latiude"
         }
     },
     'long': {//
@@ -25,16 +23,10 @@ module.exports = {
         }
     },
     'mobile': {
-        optional: true,
+        // optional: undefined, uncomment it and it doesnt work OMFG
         isMobilePhone: {
             options: ['en-IN'],
             errorMessage: 'Enter a valid Indian mobile number'
-        },
-    },
-    'isVerified': {
-        optional: true,
-        isBoolean: {
-            errorMessage: 'isVerified status must be true/false'
         }
-    }
+    },
 }

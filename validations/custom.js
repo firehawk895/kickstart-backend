@@ -1,13 +1,28 @@
 var validator = require('validator')
 var UserAuthModel = require('../models/UserAuth')
+var JobseekerModel = require('../models/Jobseeker')
 module.exports = {
     customValidators: {
-        isLatLong: function (latOrLong) {
-            var regex = /^-?([1-8]?[1-9]|[1-9]0)\.{1}\d{1,6}/
-            return latOrLong.match(regex) ? true : false
+        isLat : function (lat) {
+            var valid = false
+            if(validator.isDecimal(lat)) {
+                var latNumber = parseFloat(lat)
+                if(latNumber >= -90 && latNumber <= 90)
+                    valid = true
+            }
+            return valid
         },
-        isImage: function (mimetype) {
-            return mimetype.match(/^image/)
+        isLong : function (long) {
+            var valid = false
+            if(validator.isDecimal(long)) {
+                var longNumber = parseFloat(long)
+                if(longNumber >= -180 && longNumber <= 180)
+                    valid = true
+            }
+            return valid
+        },
+        isImage: function (file) {
+            return file.mimetype.match(/^image/)
         },
         isValidInterviewDate: function (value) {
             var result = true
@@ -40,6 +55,20 @@ module.exports = {
                         reject(err)
                     })
             })
-        }
+        },
+        isNewJobseeker : function(mobile) {
+            console.log("isNewUser time")
+            return new Promise(function (resolve, reject) {
+                JobseekerModel.checkIfNewUser(mobile)
+                    .then(function (results) {
+                        console.log("resolved and fucekd")
+                        resolve(results)
+                    })
+                    .fail(function(err) {
+                        console.log("rejected and proceeds")
+                        reject(err)
+                    })
+            })
+        },
     }
 }

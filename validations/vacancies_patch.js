@@ -11,12 +11,16 @@
 var constants = require('../constants')
 module.exports = {
     'jobTitle': {
-        optional: true,
-        errorMessage: 'jobTitle cannot be empty'
+        optional : true,
+        notEmpty : {
+            errorMessage: 'jobTitle cannot be empty'
+        }
     },
     'company': {
-        optional: true,
-        errorMessage: 'company cannot be empty'
+        optional : true,
+        notEmpty: {
+            errorMessage: 'company cannot be empty'
+        }
     },
     'salary_min': {
         optional: true,
@@ -65,13 +69,13 @@ module.exports = {
     },
     'lat': {
         optional: true,
-        isLatLong: {
+        isLat: {
             errorMessage: "Enter a valid latitude"
         }
     },
     'long': {
         optional: true,
-        isLatLong: {
+        isLong: {
             errorMessage: "Enter a valid longitude"
         }
     },

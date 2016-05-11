@@ -15,25 +15,27 @@ router.post('/login', function (req, res) {
     //if new create one, if old return the user
     //fire the OTP
     //TODO : throttle the OTP for the same number so that this API is not flooded
-    var name = req.body.name
-    var mobile = req.body.mobile
     var otp = req.body.otp
 
+    var validations = LeaderModel.validatePostLogin(req)
+    var errors = validations.errors
+    var leaderPayload = validations.req.body
+
     console.log("otp alert --- " + otp)
-
-    console.log("the request body")
-    console.log(mobile)
-
-    UserAuthModel.loginLeaderApi(name, mobile, otp)
-        .then(function (response) {
-            res.send({
-                data: response
+    if (errors) {
+        customUtils.sendErrors(errors, res)
+    } else {
+        UserAuthModel.loginLeaderApi(leaderPayload.name, leaderPayload.mobile, otp, req.body.location_name, req.body.lat, req.body.lat)
+            .then(function (response) {
+                res.send({
+                    data: response
+                })
+                res.status(200)
             })
-            res.status(200)
-        })
-        .fail(function (err) {
-            customUtils.sendErrors(err, res)
-        })
+            .fail(function (err) {
+                customUtils.sendErrors(err, res)
+            })
+    }
 })
 
 router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
@@ -41,12 +43,14 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         .then(function (validations) {
             var errors = validations.errors
             var leaderPayload = validations.req.body
+            console.log("checking life out")
+            console.log(leaderPayload)
 
             console.log("inside then of validatePostLeaderPromise")
             if (errors) {
                 customUtils.sendErrors(errors, res)
             } else {
-                UserAuthModel.signUpLeader(leaderPayload.name, leaderPayload.mobile)
+                UserAuthModel.signUpLeader(leaderPayload.name, leaderPayload.mobile, leaderPayload.location_name, leaderPayload.lat, leaderPayload.long)
                     .then(function (response) {
                         res.send({
                             data: response
@@ -81,7 +85,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
                         console.log("whats up here")
                         var theLeader = result.body
                         theLeader["id"] = req.query.id
-                        
+
                         res.send({
                             data: [theLeader]
                         })

@@ -24,7 +24,7 @@ var bcrypt = require('bcryptjs');
  * @param otp
  * @returns {!Promise}
  */
-function loginLeaderApi(name, mobile, otp) {
+function loginLeaderApi(name, mobile, otp, location, lat, long) {
     var leaderPayloadPromise = kew.defer()
     var leaderPayload
     var message = "Your OTP : " + otp
@@ -38,7 +38,7 @@ function loginLeaderApi(name, mobile, otp) {
             console.log(results.length)
             if (results[0].length === 0) {
                 console.log("sign up time")
-                return signUpLeader(name, mobile)
+                return signUpLeader(name, mobile, location, lat, long)
             } else {
                 console.log("getLeaderTime")
                 return kew.resolve(results[0])
@@ -114,7 +114,7 @@ function signUpAdmin(name, mobile, password) {
     return signedUpUser
 }
 
-function signUpLeader(name, mobile) {
+function signUpLeader(name, mobile, location_name, lat, long) {
     var newLeader = kew.defer()
     var user = {
         name: name,
@@ -124,7 +124,12 @@ function signUpLeader(name, mobile) {
         last_seen: date.getTime(),
         created: date.getTime(),
         isLeader: true,
-        isAdmin: false
+        isAdmin: false,
+        location_name : location_name,
+        location : {
+            lat : lat,
+            long : long
+        }
     };
     db.post("users", user)
         .then(function (result) {

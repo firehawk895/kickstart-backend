@@ -8,13 +8,15 @@ var constants = require('../constants')
 module.exports = {
     'jobTitle': {
         // optional: undefined,
-        notEmpty: true,
-        errorMessage: 'jobTitle cannot be empty'
+        notEmpty: {
+            errorMessage: 'jobTitle cannot be empty'
+        }
     },
     'company': {
         // optional: undefined,
-        notEmpty: true,
-        errorMessage: 'company cannot be empty'
+        notEmpty: {
+            errorMessage: 'company cannot be empty'
+        }
     },
     'salary_min': {
         // optional: undefined,
@@ -31,7 +33,7 @@ module.exports = {
     'food_accommodation': {
         // optional: undefined,
         isBoolean: {
-            errorMessage: 'Food/Accomodation must be true/false'
+            errorMessage: 'Food/Accommodation must be true/false'
         }
     },
     'educationLevel': {
@@ -55,23 +57,25 @@ module.exports = {
     },
     'display_location': {
         // optional: undefined,
-        notEmpty: true,
-        errorMessage: "Display location cannot be empty"
+        notEmpty: {
+            errorMessage: "Display location cannot be empty"
+        }
     },
     'location_name': {
         // optional: undefined,
-        notEmpty: true,
-        errorMessage: "Location cannot be empty"
+        notEmpty: {
+            errorMessage: "Location cannot be empty"
+        }
     },
     'lat': {
         // optional: undefined,
-        isLatLong: {
+        isLat: {
             errorMessage: "Enter a valid latitude"
         }
     },
     'long': {
         // optional: undefined,
-        isLatLong: {
+        isLong: {
             errorMessage: "Enter a valid longitude"
         }
     },
@@ -119,7 +123,7 @@ module.exports = {
         // optional: undefined,
         isIn: {
             options : [Object.keys(constants.computer)],
-            errorMessage: "Enter a valid Computer profieciency"
+            errorMessage: "Enter a valid Computer proficiency"
         }
     },
     'hasBike': {

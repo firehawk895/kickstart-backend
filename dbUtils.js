@@ -198,6 +198,49 @@ var emptyOrchestrateResponse = {
     }
 }
 
+/**
+ * This is a fancy level query generator:
+ * here's an example:
+ * here's the education level:
+ * education: {
+        "Below 8th": 0,
+        "10th pass": 1,
+        "12th pass": 2,
+        "Pursuing graduation": 3,
+        "Graduate": 4,
+        "Diploma(technical)": 5,
+        "Masters(arts, comm, science)" : 6,
+        "Mba": 7
+    }
+ * Now when you are searching for a "12th pass" you should also look for
+ * queries below that level - in this case "10th pass" and "Below 8th"
+ * @param field
+ * @param levelObject
+ * @param level
+ */
+function createLevelQueries(field, levelObject, level) {
+    var queries = []
+    var levels = Object.keys(levelObject)
+    var theNumericLevel = levelObject[level] || 0
+    
+    levels.forEach(function (theLevel) {
+        console.log(levelObject[theLevel])
+        console.log(theNumericLevel)
+        if(levelObject[theLevel] <= theNumericLevel)
+            queries.push(createFieldQuery(field, theLevel))
+    })
+    return queryJoinerOr(queries)
+}
+
+//test cases
+// console.log(dbUtils.createLevelQueries("educationLevel", constants.education, "10th pass"))
+// console.log(dbUtils.createLevelQueries("communication", constants.communication, "Basic english"))
+// console.log(dbUtils.createLevelQueries("license", constants.license, "Non-commercial"))
+// console.log(dbUtils.createLevelQueries("communication", constants.communication, "Basic english"))
+// console.log(dbUtils.createLevelQueries("educationLevel", constants.education, "Pursuing grdasdasaduation"))
+// console.log(dbUtils.createLevelQueries("educationLevel", constants.education, "Pursuing asdasdgraduation"))
+// console.log(dbUtils.createLevelQueries("educationLevel", constants.education, "Pursuinasdasdg graduation"))
+
 function getAllResultsFromList(collection, idList) {
     //how long can the largest lucene query to orchestrate be?
     //TODO: test the longerst lucene query or this breaks?
@@ -307,7 +350,8 @@ module.exports = {
     getAllResultsFromList: getAllResultsFromList,
     getAllItems: getAllItems,
     createFuzzyQuery: createFuzzyQuery,
-    createExistsQuery : createExistsQuery
+    createExistsQuery : createExistsQuery,
+    createLevelQueries : createLevelQueries
 }
 
 

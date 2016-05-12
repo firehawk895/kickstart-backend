@@ -38,23 +38,31 @@ function createAgeQuery(age) {
 }
 
 /**
- * query to return minimum education level.
- * the educationLevel is a number
  * @param educationLevel
  * @returns {string}
  */
 function createEducationQuery(educationLevel) {
-    /**
-     * educationLevel: {
-        "below 10th": 1,
-        "10th pass": 2,
-        "below 12th": 3,
-        "12th pass": 4,
-        "pursuing grad": 5,
-        "graduate and above": 6
-    }
-     */
-    return "value.educationLevel:[1 TO " + educationLevel + "]"
+    return dbUtils.createLevelQueries("educationLevel",constants.education, educationLevel)
+}
+
+function createCommunicationQuery(communicationLevel) {
+    return dbUtils.createLevelQueries("communication",constants.communication, communicationLevel)
+}
+
+function createLicenseQuery(licenseLevel) {
+    return dbUtils.createLevelQueries("license",constants.license, licenseLevel)
+}
+
+function createComputerQuery(computerLevel) {
+    return dbUtils.createLevelQueries("computer",constants.computer, computerLevel)
+}
+
+function createHasSmartPhoneQuery(hasSmartphone) {
+    return "value.hasSmartphone:" + hasSmartphone
+}
+
+function createHasBikeQuery(hasBike) {
+    return "value.hasBike:" + hasBike
 }
 
 function createTradeQuery(trade) {
@@ -121,5 +129,10 @@ module.exports = {
     createEducationQuery: createEducationQuery,
     createTradeQuery: createTradeQuery,
     validatePostVacancy : validatePostVacancy,
-    validatePatchVacancy : validatePatchVacancy
+    validatePatchVacancy : validatePatchVacancy,
+    createCommunicationQuery : createCommunicationQuery,
+    createLicenseQuery : createLicenseQuery,
+    createComputerQuery : createComputerQuery,
+    createHasSmartPhoneQuery : createHasSmartPhoneQuery,
+    createHasBikeQuery : createHasBikeQuery
 }

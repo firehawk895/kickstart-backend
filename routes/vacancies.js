@@ -104,6 +104,31 @@ router.get('/', function(req, res) {
         queries.push(VacancyModel.createEducationQuery(req.query.educationLevel))
     }
 
+    if(req.query.communication) {
+        console.log("minimum communication query")
+        queries.push(VacancyModel.createCommunicationQuery(req.query.communication))
+    }
+
+    if(req.query.license) {
+        console.log("minimum license query")
+        queries.push(VacancyModel.createLicenseQuery(req.query.license))
+    }
+
+    if(req.query.computer) {
+        console.log("minimum computer proficiency query")
+        queries.push(VacancyModel.createComputerQuery(req.query.computer))
+    }
+
+    if(req.query.hasSmartphone) {
+        console.log("hasSmartphone query")
+        queries.push(VacancyModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
+    }
+
+    if(req.query.hasBike) {
+        console.log("hasBike query")
+        queries.push(VacancyModel.createHasBikeQuery(req.query.hasBike))
+    }
+
     if(req.query.trade) {
         console.log("trade query")
         queries.push(dbUtils.createFieldQuery("trade", req.query.trade))

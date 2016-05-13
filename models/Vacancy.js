@@ -66,7 +66,7 @@ function createHasBikeQuery(hasBike) {
 }
 
 function createTradeQuery(trade) {
-    return dbUtils.createExistsQuery("value.trades."+trade)
+    return dbUtils.createFieldQuery("trade", trade)
 }
 
 function validatePostVacancy(req) {

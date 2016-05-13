@@ -95,7 +95,7 @@ router.get('/', function (req, res) {
 
     if (req.query.trade) {
         console.log("trade query")
-        queries.push(VacancyModel.createTradeQuery(req.query.trade))
+        queries.push(JobseekerModel.createTradeQuery(req.query.trade))
     }
 
     var theFinalQuery = dbUtils.queryJoiner(queries)

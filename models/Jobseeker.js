@@ -122,6 +122,7 @@ function validatePatch(req) {
 }
 
 var sanitizePayload = function (reqBody) {
+    var hasSelectedTrades = false
     var jobSeekerPayload = {
         name: reqBody.name,
         mobile: reqBody.mobile,
@@ -158,8 +159,8 @@ var sanitizePayload = function (reqBody) {
     jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
 }
 
-var sanitizeTrades = function(req, payload) {
-
+function createTradeQuery(trade) {
+    return dbUtils.createExistsQuery("value.trades."+trade)
 }
 
 module.exports = {
@@ -167,5 +168,6 @@ module.exports = {
     incrementInterviews: incrementInterviews,
     getTheLeader: getTheLeader,
     injectLeader : injectLeader,
-    checkIfNewUser : checkIfNewUser
+    checkIfNewUser : checkIfNewUser,
+    createTradeQuery : createTradeQuery
 }

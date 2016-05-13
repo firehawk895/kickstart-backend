@@ -28,9 +28,8 @@ function validatePostLeaderPromise(req) {
 }
 
 function validatePatchLeaderPromise(req) {
-    var leaderValidation = require('../validations/leader')
-    var patchSchema = customUtils.schemaConverter(leaderValidation)
-    return customUtils.validateMePromise(req, patchSchema, sanitizePayload)
+    var leaderValidation = require('../validations/leader_patch')
+    return customUtils.validateMePromise(req, leaderValidation, sanitizePayload)
 }
 
 function validatePostLogin(req) {
@@ -50,9 +49,29 @@ var sanitizePayload = function (reqBody) {
     return leaderPayload
 }
 
+var deleteAllTokens = function(leaderId) {
+    var query = "value.user" + leaderId
+    db.newSearchBuilder()
+        .collection("tokens")
+        .query(query)
+        .then(function(results) {
+            var theTokens = dbUtils.injectId(results)
+            theTokens.forEach(function(theToken) {
+                db.remove('tokens', theToken.id, true)
+                    .then(function (result) {
+
+                    })
+                    .fail(function (err) {
+
+                    })
+            })
+        })
+}
+
 module.exports = {
     getLeadersJobseekers: getLeadersJobseekers,
     validatePostLeaderPromise: validatePostLeaderPromise,
     validatePatchLeaderPromise: validatePatchLeaderPromise,
-    validatePostLogin: validatePostLogin
+    validatePostLogin: validatePostLogin,
+    deleteAllTokens : deleteAllTokens
 }

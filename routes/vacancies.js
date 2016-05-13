@@ -14,6 +14,10 @@ var constants = require('../constants')
 var passport = require('passport')
 var multer = require('multer');
 
+router.get('/test',  function (req, res) {
+    dbUtils.generateCsvFile("vacancies")
+})
+
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     console.log(req.body)
     var validations = VacancyModel.validatePostVacancy(req)
@@ -68,7 +72,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
     }
 }])
 
-router.get('/', function(req, res) {
+router.get('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
     var promises = []
     //var userId = req.user.results[0].value.id
     var queries = []
@@ -183,7 +187,7 @@ router.get('/', function(req, res) {
     //age, education, trade, lat, long, radius
     //sorted in increasing order of distance
     //id= will give 1 vacancies details
-})
+}])
 
 router.delete('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
     var vacancyId = req.query.id

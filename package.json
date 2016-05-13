@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "forever --watch --fifo start ./bin/www"
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "bcryptjs": "*",
@@ -19,8 +19,10 @@
     "express": "*",
     "express-validator": "^2.20.3",
     "firebase": "*",
+    "forever": "0.15.1",
     "fs": "*",
     "jade": "*",
+    "json2csv": "^3.4.1",
     "jsonwebtoken": "*",
     "kew": "*",
     "lodash": "*",
@@ -35,7 +37,6 @@
     "random-string": "*",
     "request": "*",
     "s3fs": "*",
-    "validator": "*",
-    "forever": "0.15.1"
+    "validator": "*"
   }
 }

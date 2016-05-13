@@ -77,6 +77,10 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
             if (errors) {
                 customUtils.sendErrors(errors, res)
             } else {
+                if(req.body.isVerified && req.body.isVerified == false) {
+                    console.log("time to delete user " + req.query.id + "'s tokens")
+                    LeaderModel.deleteAllTokens(req.query.id)
+                }
                 db.merge('users', req.query.id, sanitizedPayload)
                     .then(function (result) {
                         return db.get("users", req.query.id)

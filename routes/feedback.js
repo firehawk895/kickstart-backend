@@ -47,7 +47,7 @@ userRef.on("child_added", function (snapshot) {
             if (messageObj.displayName != "Kickstart") {
                 console.log("time to post")
                 request.post(config.newSlack.feedbackHook, {
-                    body: JSON.stringify({text: "*$" + username + " : " + messageObj.text + "*"})
+                    body: JSON.stringify({text: "*$" + username + "() : " + messageObj.text + "*"})
                 })
             }
         }

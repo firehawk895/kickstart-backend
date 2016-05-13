@@ -4,6 +4,8 @@ oio.ApiEndPoint = config.db.region;
 var db = oio(config.db.key);
 var constants = require('./constants')
 var kew = require('kew')
+var json2csv = require('json2csv');
+var fs = require('fs')
 
 /**
  * Orchestrate query wrappers ---------------------------------->
@@ -222,11 +224,11 @@ function createLevelQueries(field, levelObject, level) {
     var queries = []
     var levels = Object.keys(levelObject)
     var theNumericLevel = levelObject[level] || 0
-    
+
     levels.forEach(function (theLevel) {
         console.log(levelObject[theLevel])
         console.log(theNumericLevel)
-        if(levelObject[theLevel] <= theNumericLevel)
+        if (levelObject[theLevel] <= theNumericLevel)
             queries.push(createFieldQuery(field, theLevel))
     })
     return queryJoinerOr(queries)
@@ -304,6 +306,43 @@ function allItemsPromisesList(collection, query) {
     return promiseList
 }
 
+function generateCsv(collection) {
+    var generatedCsvStatus = kew.defer()
+    getAllItems(collection, "@path.kind:item")
+        .then(function (results) {
+            json2csv({data: results}, function (err, csv) {
+                if (err) {
+                    console.log(err);
+                    generatedCsvStatus.reject(err)
+                } else {
+                    console.log(csv);
+                    generatedCsvStatus.resolve(csv)
+                }
+            });
+        })
+        .fail(function (err) {
+            generatedCsvStatus.reject(err)
+        })
+    return generatedCsvStatus
+}
+
+function generateCsvFile(collection) {
+    var fileStatus = kew.defer()
+    generateCsv(collection)
+        .then(function (csvDump) {
+            fs.writeFile("../test.csv", csvDump, function (err) {
+                if (err) {
+                    console.log(err);
+                    fileStatus.reject(err)
+                } else {
+                    fileStatus.resolve()
+                    console.log("The file was saved!");
+                }
+            });
+        })
+    return fileStatus
+}
+
 /**
  * this returns all the items in a database collection
  * asynchronously - non graph queries
@@ -350,8 +389,9 @@ module.exports = {
     getAllResultsFromList: getAllResultsFromList,
     getAllItems: getAllItems,
     createFuzzyQuery: createFuzzyQuery,
-    createExistsQuery : createExistsQuery,
-    createLevelQueries : createLevelQueries
+    createExistsQuery: createExistsQuery,
+    createLevelQueries: createLevelQueries,
+    generateCsvFile: generateCsvFile
 }
 
 

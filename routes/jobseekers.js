@@ -116,7 +116,6 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
          * remove sort by location if query does not have
          * location. the orchestrate query won't work otherwise
          */
-        console.log("definitely here")
         var distanceLessQuery = db.newSearchBuilder()
             .collection("jobseekers")
             .limit(limit)
@@ -272,6 +271,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
                 return db.get("jobseekers", jobseekerId)
             })
             .then(function (jobseeker) {
+                jobseeker["body"]["id"] = jobseekerId
                 res.send({
                     data: jobseeker.body
                 })

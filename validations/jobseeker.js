@@ -27,7 +27,7 @@ module.exports = {
     'lat': {
         optional: true,
         isLat: {
-            errorMessage: "Enter a valid lattitude"
+            errorMessage: "Enter a valid latitude"
         }
     },
     'long': {//
@@ -43,6 +43,7 @@ module.exports = {
         }
     },
     'dateOfBirth': {
+        optional: true,
         isInt: {
             errorMessage: "Please enter a valid date of birth"
         }

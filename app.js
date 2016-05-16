@@ -48,6 +48,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(expressValidator(customValidations));
+app.use('/csv', express.static('csv'));
 
 app.use(passport.initialize());
 

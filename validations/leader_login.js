@@ -6,6 +6,7 @@ module.exports = {
         }
     },
     'location_name': {
+        optional: true,
         notEmpty : {
             errorMessage : "Please enter location for the leader"
         }

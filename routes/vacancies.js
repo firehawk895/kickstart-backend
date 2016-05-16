@@ -14,8 +14,14 @@ var constants = require('../constants')
 var passport = require('passport')
 var multer = require('multer');
 
-router.get('/test',  function (req, res) {
+router.get('/test', function (req, res) {
     dbUtils.generateCsvFile("vacancies")
+        .then(function (results) {
+            // console.log(results)
+        })
+        .fail(function (err) {
+            console.log(err)
+        })
 })
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
@@ -24,11 +30,11 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
     var errors = validations.errors
     var vacancyPayload = validations.req.body
 
-    if(errors) {
+    if (errors) {
         customUtils.sendErrors(errors, res)
     } else {
         VacancyModel.create(vacancyPayload)
-            .then(function(response) {
+            .then(function (response) {
                 vacancyPayload["id"] = dbUtils.getIdAfterPost(response)
                 res.send({
                     data: vacancyPayload
@@ -36,7 +42,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
                 res.status(200)
                 eventSystem.dispatch(constants.events.newVacancy, vacancyPayload)
             })
-            .fail(function(err) {
+            .fail(function (err) {
                 customUtils.sendErrors(err, res)
             })
     }
@@ -50,15 +56,15 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
     var errors = validations.errors
     var vacancyPayload = validations.req.body
 
-    if(errors) {
+    if (errors) {
         customUtils.sendErrors(errors, res)
     } else {
         console.log("all cool")
         db.merge("vacancies", id, vacancyPayload)
-            .then(function(res) {
+            .then(function (res) {
                 return db.get("vacancies", id)
             })
-            .then(function(vacancy) {
+            .then(function (vacancy) {
                 var theVacancy = vacancy.body
                 theVacancy["id"] = id
                 res.send({
@@ -66,7 +72,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
                 })
                 res.status(201)
             })
-            .fail(function(err) {
+            .fail(function (err) {
                 customUtils.sendErrors(err, res)
             })
     }
@@ -96,44 +102,44 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         isDistanceQuery = true;
     }
 
-    if(req.query.age) {
+    if (req.query.age) {
         console.log("we have an age query")
         var ageQuery = VacancyModel.createAgeQuery(req.query.age)
         console.log(ageQuery)
         queries.push(ageQuery)
     }
 
-    if(req.query.educationLevel) {
+    if (req.query.educationLevel) {
         console.log("minimum education query")
         queries.push(VacancyModel.createEducationQuery(req.query.educationLevel))
     }
 
-    if(req.query.communication) {
+    if (req.query.communication) {
         console.log("minimum communication query")
         queries.push(VacancyModel.createCommunicationQuery(req.query.communication))
     }
 
-    if(req.query.license) {
+    if (req.query.license) {
         console.log("minimum license query")
         queries.push(VacancyModel.createLicenseQuery(req.query.license))
     }
 
-    if(req.query.computer) {
+    if (req.query.computer) {
         console.log("minimum computer proficiency query")
         queries.push(VacancyModel.createComputerQuery(req.query.computer))
     }
 
-    if(req.query.hasSmartphone) {
+    if (req.query.hasSmartphone) {
         console.log("hasSmartphone query")
         queries.push(VacancyModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
     }
 
-    if(req.query.hasBike) {
+    if (req.query.hasBike) {
         console.log("hasBike query")
         queries.push(VacancyModel.createHasBikeQuery(req.query.hasBike))
     }
 
-    if(req.query.trade) {
+    if (req.query.trade) {
         console.log("trade query")
         queries.push(dbUtils.createFieldQuery("trade", req.query.trade))
     }
@@ -142,7 +148,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     console.log("final query")
     console.log(theFinalQuery)
 
-    if(isDistanceQuery) {
+    if (isDistanceQuery) {
         var distanceQuery = db.newSearchBuilder()
             .collection("vacancies")
             .limit(limit)
@@ -166,7 +172,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     }
 
     kew.all(promises)
-        .then(function(results) {
+        .then(function (results) {
             if (distanceQuery) {
                 results[0] = customUtils.insertDistance(results[0], req.query.lat, req.query.long)
             }
@@ -193,7 +199,7 @@ router.delete('/', [passport.authenticate('bearer', {session: false}), function 
     var vacancyId = req.query.id
 
     db.remove('vacancy', vacancyId, true)
-        .then(function (result) {x
+        .then(function (result) {
             res.send({
                 data: {}
             })

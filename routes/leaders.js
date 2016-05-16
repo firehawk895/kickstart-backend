@@ -143,6 +143,19 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         })
 }])
 
+router.get('/csv', [passport.authenticate('bearer', {session: false}), function (req, res) {
+    //TODO: after improving the system to token authentication
+    //TODO: ensure authorization by allowing only admin tokens to download this sensitive
+    
+    dbUtils.generateCsvFile("users", "value.isAdmin:false")
+        .then(function (results) {
+            
+        })
+        .fail(function (err) {
+            console.log(err)
+        })
+}])
+
 router.delete('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
     var id = req.query.id
 

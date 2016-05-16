@@ -201,4 +201,8 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         })
 }])
 
+router.get('/csv', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
+    
+}])
+
 module.exports = router

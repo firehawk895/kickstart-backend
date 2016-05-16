@@ -141,6 +141,7 @@ function createExistsQuery(fieldPath) {
 function injectId(results) {
     var response = results.body.results.map(function (aResult) {
         var value = aResult.value
+        if (value == undefined) value = {} //strange use case when the value object is empty
         value["id"] = aResult.path.key
         return value
     })
@@ -306,9 +307,9 @@ function allItemsPromisesList(collection, query) {
     return promiseList
 }
 
-function generateCsv(collection) {
+function generateCsv(collection, query) {
     var generatedCsvStatus = kew.defer()
-    getAllItems(collection, "@path.kind:item")
+    getAllItems(collection, query)
         .then(function (results) {
             json2csv({data: results}, function (err, csv) {
                 if (err) {
@@ -326,11 +327,12 @@ function generateCsv(collection) {
     return generatedCsvStatus
 }
 
-function generateCsvFile(collection) {
+function generateCsvFile(collection, query) {
     var fileStatus = kew.defer()
-    generateCsv(collection)
+    generateCsv(collection, query)
         .then(function (csvDump) {
-            fs.writeFile("../test.csv", csvDump, function (err) {
+            var filepath = "csv/" + collection + ".csv"
+            fs.writeFile(filepath, csvDump, function (err) {
                 if (err) {
                     console.log(err);
                     fileStatus.reject(err)
@@ -350,16 +352,14 @@ function generateCsvFile(collection) {
  * @returns {!Promise}
  */
 function getAllItems(collection, query) {
-    console.log("anybody home")
     var allItems = kew.defer()
-    console.log("Im home!")
     allItemsPromisesList(collection, query)
         .then(function (promiseList) {
             return kew.all(promiseList)
         })
         .then(function (promiseResults) {
-            console.log("ok")
             var allItemsList = []
+            console.log(injectId(promiseResults[0]))
             promiseResults.forEach(function (item) {
                 // console.log(item.body.results[0].path.destination)
                 var injectedItems = injectId(item)
@@ -391,7 +391,7 @@ module.exports = {
     createFuzzyQuery: createFuzzyQuery,
     createExistsQuery: createExistsQuery,
     createLevelQueries: createLevelQueries,
-    generateCsvFile: generateCsvFile
+    generateCsvFile: generateCsvFile,
 }
 
 

@@ -15,7 +15,7 @@ var db = oio(config.db.key);
 var kew = require('kew');
 var multer = require('multer');
 
-router.get('/', function (req, res) {
+router.get('/', [passport.authenticate('bearer', {session: false}), function (req, res) {
     /**
      * Note the leaderId is stored in this collection denormalized,
      * however graph relations have been made as well to support
@@ -147,7 +147,7 @@ router.get('/', function (req, res) {
         .fail(function (err) {
             customUtils.sendErrors([err.body.message], 503, res)
         })
-})
+}])
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var leaderId = req.body.leaderId || req.user.results[0].path.key;

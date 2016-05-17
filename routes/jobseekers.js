@@ -189,6 +189,9 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
 router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var jobseekerId = req.query.id
     var otp = req.body.otp
+    
+    console.log("request payload")
+    console.log(req.body)
 
     JobseekerModel.validatePatchPromise(req)
         .then(function (validations) {
@@ -200,7 +203,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
                 console.log(errors)
                 customUtils.sendErrors(errors, res)
             } else {
-                console.log("heres the jobSeekerPayload")
+                console.log("the sanitized payload")
                 console.log(jobSeekerPayload)
                 customUtils.upload(req.files.avatar, function (theImageInS3) {
                     jobSeekerPayload["avatar"] = ((theImageInS3) ? theImageInS3.url : undefined)

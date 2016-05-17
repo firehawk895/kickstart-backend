@@ -207,7 +207,7 @@ var sanitizePatchPayload = function (reqBody) {
             long: customUtils.myParseFloat(reqBody.long)
         },
         gender: reqBody.gender,
-        // hasSelectedTrades: false, --> will always be true
+        hasSelectedTrades: undefined,
         dateOfBirth: customUtils.myParseInt(reqBody.dateOfBirth),
         lastSalary: customUtils.myParseInt(reqBody.lastSalary),
         communication: reqBody.communication,
@@ -225,6 +225,7 @@ var sanitizePatchPayload = function (reqBody) {
     constants.trades.forEach(function (trade) {
         if (reqBody[trade]) {
             jobSeekerPayload["trades"][trade] = reqBody[trade]
+            jobSeekerPayload["hasSelectedTrades"] = true
         }
         else
             jobSeekerPayload["trades"][trade] = null //ensures an old key is deleted

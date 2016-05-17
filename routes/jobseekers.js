@@ -150,8 +150,6 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var otp = req.body.otp
-    console.log("the request")
-    console.log(req.body)
     JobseekerModel.validatePostPromise(req)
         .then(function (validations) {
             var errors = validations.errors
@@ -167,7 +165,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
                     JobseekerModel.create(jobSeekerPayload["leaderId"], jobSeekerPayload)
                         .then(function (response) {
                             var message = "Your OTP : " + otp
-                            customUtils.sendSms(message, jobSeekerPayload.mobile)
+                            if (otp) customUtils.sendSms(message, jobSeekerPayload.mobile)
                             res.send({
                                 data: response
                             })
@@ -187,73 +185,40 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
 
 router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     var jobseekerId = req.query.id
-    if (req.body.lat) req.body.lat = parseFloat(req.body.lat)
-    if (req.body.long) req.body.long = parseFloat(req.body.long)
-    if (req.body.hasBike) req.body.hasBike = customUtils.stringToBoolean(req.body.hasBike)
-    if (req.body.hasSmartphone) req.body.hasSmartphone = customUtils.stringToBoolean(req.body.hasSmartphone)
-    var hasSelectedTrades = false
+    var otp = req.body.otp
 
-    customUtils.upload(req.files.avatar, function (theImageInS3) {
-        var jobSeekerPayload = {
-            name: req.body.name,
-            mobile: req.body.mobile,
-            educationLevel: req.body.educationLevel,
-            mobileVerified: customUtils.stringToBoolean(req.body.mobileVerified),
-            location_name: req.body.location_name,
-            location: {
-                lat: req.body.lat,
-                long: req.body.long
-            },
-            gender: req.body.gender,
-            dateOfBirth: req.body.dateOfBirth,
-            lastSalary: req.body.lastSalary,
-            jobStatus: req.body.jobStatus,
-            communication: req.body.communication,
-            hasBike: req.body.hasBike,
-            license: req.body.license,
-            hasSmartphone: req.body.hasSmartphone,
-            computer: req.body.computer,
-            // trades: {},
-            comments: req.body.comments,
-            //leaderId: leaderId, //denormalized for easy search, but graph relationships included
-            image: theImageInS3
-        }
-        var tradesPayload = {}
+    JobseekerModel.validatePatchPromise(req)
+        .then(function (validations) {
+            var errors = validations.errors
+            var jobSeekerPayload = validations.req.body
 
-        constants.trades.forEach(function (trade) {
-            if (req.body[trade]) {
-                hasSelectedTrades = true
-                tradesPayload[trade] = req.body[trade]
-            }
-            else
-                tradesPayload[trade] = null //ensures an old key is deleted
-        })
+            if (errors) {
+                customUtils.sendErrors(errors, res)
+            } else {
+                console.log("heres the jobSeekerPayload")
+                console.log(jobSeekerPayload)
+                customUtils.upload(req.files.avatar, function (theImageInS3) {
+                    jobSeekerPayload["avatar"] = ((theImageInS3) ? theImageInS3.url : undefined)
+                    jobSeekerPayload["avatarThumb"] = ((theImageInS3) ? theImageInS3.urlThumb : undefined)
 
-        console.log("hasSelectedTrade : " + hasSelectedTrades)
-
-        if (hasSelectedTrades) {
-            jobSeekerPayload["trades"] = tradesPayload
-            jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
-        }
-
-
-        console.log(jobSeekerPayload)
-
-        db.merge("jobseekers", jobseekerId, jobSeekerPayload)
-            .then(function (response) {
-                return db.get("jobseekers", jobseekerId)
-            })
-            .then(function (jobseeker) {
-                jobseeker["body"]["id"] = jobseekerId
-                res.send({
-                    data: jobseeker.body
+                    db.merge("jobseekers", jobseekerId, jobSeekerPayload)
+                        .then(function (response) {
+                            return db.get("jobseekers", jobseekerId)
+                        })
+                        .then(function (jobseeker) {
+                            jobseeker["body"]["id"] = jobseekerId
+                            if (otp) customUtils.sendSms(message, jobSeekerPayload.mobile)
+                            res.send({
+                                data: jobseeker.body
+                            })
+                            res.status(200)
+                        })
+                        .fail(function (err) {
+                            customUtils.sendErrors(err, res)
+                        })
                 })
-                res.status(200)
-            })
-            .fail(function (err) {
-                customUtils.sendErrors(err, 422, res)
-            })
-    })
+            }
+        })
 }])
 
 router.post('/verify', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {

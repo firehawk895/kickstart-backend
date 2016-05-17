@@ -44,7 +44,7 @@ function getTheLeader(jobseekerId) {
 function injectLeader(jobseekerResults) {
     var injectedJobseeker = kew.defer()
     var leaderIds = extractLeaderIds(jobseekerResults)
-    
+
     dbUtils.getAllResultsFromList("users", leaderIds)
         .then(function (results) {
             var leaderMap = customUtils.createHashMap(results)
@@ -119,8 +119,7 @@ function validatePostPromise(req) {
 
 function validatePatchPromise(req) {
     var patchSchema = require('../validations/jobseeker_patch')
-    console.log(patchSchema)
-    return customUtils.validateMePromise(req, patchSchema, sanitizePayload)
+    return customUtils.validateMePromise(req, patchSchema, sanitizePatchPayload)
 }
 
 var sanitizePostPayload = function (reqBody) {
@@ -158,13 +157,12 @@ var sanitizePostPayload = function (reqBody) {
             jobSeekerPayload["trades"][trade] = reqBody[trade]
         }
     })
-    
+
     jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
     return jobSeekerPayload
 }
 
 var sanitizePatchPayload = function (reqBody) {
-    var hasSelectedTrades = false
     var jobSeekerPayload = {
         name: reqBody.name,
         mobile: reqBody.mobile,
@@ -177,7 +175,7 @@ var sanitizePatchPayload = function (reqBody) {
             long: customUtils.myParseFloat(reqBody.long)
         },
         gender: reqBody.gender,
-        hasSelectedTrades: false,
+        // hasSelectedTrades: false, --> will always be true
         dateOfBirth: customUtils.myParseInt(reqBody.dateOfBirth),
         lastSalary: customUtils.myParseInt(reqBody.lastSalary),
         communication: reqBody.communication,
@@ -187,32 +185,34 @@ var sanitizePatchPayload = function (reqBody) {
         computer: reqBody.computer,
         trades: {},
         comments: reqBody.comments,
-        leaderId: leaderId, //denormalized for easy search, but graph relationships included
+        leaderId: reqBody.leaderId, //denormalized for easy search, but graph relationships included
         // avatar: ((theImageInS3) ? theImageInS3.url : ""),
         // avatarThumb: ((theImageInS3) ? theImageInS3.urlThumb : "")
     }
 
     constants.trades.forEach(function (trade) {
         if (reqBody[trade]) {
-            hasSelectedTrades = true
             jobSeekerPayload["trades"][trade] = reqBody[trade]
         }
+        else
+            jobSeekerPayload["trades"][trade] = null //ensures an old key is deleted
+        // (not required, expect front end to send all trades again)
     })
-    jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
+    return jobSeekerPayload
 }
 
 
 function createTradeQuery(trade) {
-    return dbUtils.createExistsQuery("value.trades."+trade)
+    return dbUtils.createExistsQuery("value.trades." + trade)
 }
 
 module.exports = {
     create: create,
     incrementInterviews: incrementInterviews,
     getTheLeader: getTheLeader,
-    injectLeader : injectLeader,
-    checkIfNewUser : checkIfNewUser,
-    createTradeQuery : createTradeQuery,
-    validatePostPromise : validatePostPromise,
-    validatePatchPromise : validatePatchPromise
+    injectLeader: injectLeader,
+    checkIfNewUser: checkIfNewUser,
+    createTradeQuery: createTradeQuery,
+    validatePostPromise: validatePostPromise,
+    validatePatchPromise: validatePatchPromise
 }

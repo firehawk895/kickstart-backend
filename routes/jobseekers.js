@@ -281,7 +281,6 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
                 customUtils.sendErrors(err, 422, res)
             })
     })
-
 }])
 
 router.post('/verify', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {

@@ -245,15 +245,18 @@ function createLevelQueries(field, levelObject, level) {
 // console.log(dbUtils.createLevelQueries("educationLevel", constants.education, "Pursuinasdasdg graduation"))
 
 function getAllResultsFromList(collection, idList) {
+    console.log("the biggest flaw")
     //how long can the largest lucene query to orchestrate be?
     //TODO: test the longerst lucene query or this breaks?
     var queries = []
+    console.log("the ids are here")
     console.log(idList)
 
     idList.forEach(function (id) {
         queries.push(createSearchByIdQuery(id))
     })
     var finalQuery = queryJoinerOr(queries)
+    console.log("the query is here")
     console.log(finalQuery)
     if (finalQuery == "") {
         //emulate a result from orchestrate that is empty
@@ -392,6 +395,7 @@ module.exports = {
     createExistsQuery: createExistsQuery,
     createLevelQueries: createLevelQueries,
     generateCsvFile: generateCsvFile,
+    emptyOrchestrateResponse : emptyOrchestrateResponse
 }
 
 

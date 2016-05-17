@@ -138,16 +138,49 @@ function injectVacancyAndJobseeker(interviewResults) {
 }
 
 /**
+ 
+ * @returns {SearchBuilder}
+ */
+/**
  * get an interview,
  * not using db.get so that other methods are compatible with the result
  * @param id
- * @returns {SearchBuilder}
+ * @returns {!Promise}
  */
 function getInterview(id) {
-    var query = dbUtils.createSearchByIdQuery(id)
-    return db.newSearchBuilder()
-        .collection("interviews")
-        .query(query)
+    // var query = dbUtils.createSearchByIdQuery(id)
+    // return db.newSearchBuilder()
+    //     .collection("interviews")
+    //     .query(query)
+    /**
+     * DO NOT USE db.newSearchBuilder() immediately after a create
+     * indexes in orchestrate take some time to be created
+     * @type {!Promise}
+     */
+    var theInterviewResult = kew.defer()
+    console.log("hey hey")
+    console.log(id)
+    db.get("interviews", id)
+        .then(function(theInterview) {
+            console.log(theInterview.body)
+            theInterviewResult.resolve({
+                body: {
+                    total_count: 0,
+                    results: [
+                        {
+                            path : {
+                                key : id
+                            },
+                            value : theInterview.body
+                        }
+                    ]
+                }
+            })
+        })
+        .fail(function(err) {
+            theInterviewResult.reject(err)
+        })
+    return theInterviewResult
 }
 
 module.exports = {

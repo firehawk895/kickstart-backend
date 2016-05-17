@@ -292,21 +292,14 @@ var insertDistance = function (results, usersLat, usersLong) {
 
 var createHashMap = function (results) {
     var theMap = {}
-    try {
-        console.log("inside createhashMap")
-        console.log(results)
-        var injectedResults = dbUtils.injectId(results)
-        console.log("injected")
-        injectedResults.forEach(function (result) {
-            theMap[result.id] = result
-        })
-        return theMap
-    } catch (e) {
-        request.post(config.newSlack.feedbackHook, {
-            body: JSON.stringify({text: "*$" + e + "*"})
-        })
-        return theMap
-    }
+    console.log("inside createhashMap")
+    console.log(results)
+    var injectedResults = dbUtils.injectId(results)
+    console.log("injected")
+    injectedResults.forEach(function (result) {
+        theMap[result.id] = result
+    })
+    return theMap
 }
 
 /**

@@ -57,13 +57,15 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
             return InterviewModel.create(interviewPayload)
         })
         .then(function (interviewPayload) {
-            console.log("stage2")
+            console.log("lets verify the id")
             console.log(interviewPayload.id)
+            console.log("lets verify the id")
             return InterviewModel.getInterview(interviewPayload.id)
         })
         .then(function(interviewResults) {
-            console.log("stage3")
-            console.log(interviewResults.body)
+            console.log("test bed ------------------")
+            console.log(interviewResults)
+            console.log("test bed ------------------")
             return InterviewModel.injectVacancyAndJobseeker(interviewResults)
         })
         .then(function(results) {
@@ -204,5 +206,22 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
 router.get('/csv', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
     
 }])
+
+function sleeper(interviewResults) {
+    var sleeper = kew.defer()
+    sleep(5000, function() {
+        // executes after one second, and blocks the thread
+        sleeper.resolve(interviewResults)
+    });
+    return sleeper
+}
+
+function sleep(time, callback) {
+    var stop = new Date().getTime();
+    while(new Date().getTime() < stop + time) {
+        ;
+    }
+    callback();
+}
 
 module.exports = router

@@ -158,11 +158,8 @@ function getInterview(id) {
      * @type {!Promise}
      */
     var theInterviewResult = kew.defer()
-    console.log("hey hey")
-    console.log(id)
     db.get("interviews", id)
         .then(function(theInterview) {
-            console.log(theInterview.body)
             theInterviewResult.resolve({
                 body: {
                     total_count: 0,

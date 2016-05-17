@@ -269,7 +269,7 @@ function getFormattedDate(unix_timestamp) {
     var seconds = "0" + date.getSeconds();
 
 // Will display time in 10:30:23 format
-    var formattedTime = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + ", " + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    var formattedTime = date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + " "
     return formattedTime
 }
 

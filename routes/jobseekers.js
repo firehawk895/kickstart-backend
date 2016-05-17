@@ -149,6 +149,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
 }])
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
+    req.body.leaderId = req.body.leaderId || req.user.results[0].path.key;
     var otp = req.body.otp
     JobseekerModel.validatePostPromise(req)
         .then(function (validations) {

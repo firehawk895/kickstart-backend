@@ -154,7 +154,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
             .collection("vacancies")
             .limit(limit)
             .offset(offset)
-            .sortBy('value.location', 'distance:asc')
+            .sort('location', 'distance:asc')
             .query(theFinalQuery)
         promises.push(distanceQuery)
     } else {

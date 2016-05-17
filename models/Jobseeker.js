@@ -85,6 +85,7 @@ function getUserByPhoneNumber(mobile) {
 }
 
 function checkIfNewUser(mobile) {
+    console.log("checkIfNewUser")
     var newUser = kew.defer()
     getUserByPhoneNumber(mobile)
         .then(function (result) {
@@ -110,18 +111,19 @@ function incrementInterviews(jobseekerId) {
         .apply()
 }
 
-function validatePos(req) {
+function validatePostPromise(req) {
+    console.log("validatePost")
     var validation = require('../validations/jobseeker')
-    return customUtils.validateMe(req, validation, sanitizePayload)
+    return customUtils.validateMePromise(req, validation, sanitizePostPayload)
 }
 
-function validatePatch(req) {
-    var patchSchema = require('../validations/vacancies_patch')
+function validatePatchPromise(req) {
+    var patchSchema = require('../validations/jobseeker_patch')
     console.log(patchSchema)
-    return customUtils.validateMe(req, patchSchema, sanitizePayload)
+    return customUtils.validateMePromise(req, patchSchema, sanitizePayload)
 }
 
-var sanitizePayload = function (reqBody) {
+var sanitizePostPayload = function (reqBody) {
     var hasSelectedTrades = false
     var jobSeekerPayload = {
         name: reqBody.name,
@@ -137,7 +139,47 @@ var sanitizePayload = function (reqBody) {
         gender: reqBody.gender,
         hasSelectedTrades: false,
         dateOfBirth: customUtils.myParseInt(reqBody.dateOfBirth),
-        lastSalary: reqBody.lastSalary,
+        lastSalary: customUtils.myParseInt(reqBody.lastSalary),
+        communication: reqBody.communication,
+        hasBike: customUtils.stringToBoolean(reqBody.hasBike),
+        license: reqBody.license,
+        hasSmartphone: customUtils.stringToBoolean(reqBody.hasSmartphone),
+        computer: reqBody.computer,
+        trades: {},
+        comments: reqBody.comments,
+        leaderId: reqBody.leaderId, //denormalized for easy search, but graph relationships included
+        // avatar: ((theImageInS3) ? theImageInS3.url : ""),
+        // avatarThumb: ((theImageInS3) ? theImageInS3.urlThumb : "")
+    }
+
+    constants.trades.forEach(function (trade) {
+        if (reqBody[trade]) {
+            hasSelectedTrades = true
+            jobSeekerPayload["trades"][trade] = reqBody[trade]
+        }
+    })
+    
+    jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
+    return jobSeekerPayload
+}
+
+var sanitizePatchPayload = function (reqBody) {
+    var hasSelectedTrades = false
+    var jobSeekerPayload = {
+        name: reqBody.name,
+        mobile: reqBody.mobile,
+        educationLevel: reqBody.educationLevel,
+        mobileVerified: customUtils.stringToBoolean(reqBody.mobileVerified),
+        // interview_count: 0, --> this will be auto updated now
+        location_name: reqBody.location_name,
+        location: {
+            lat: customUtils.myParseFloat(reqBody.lat),
+            long: customUtils.myParseFloat(reqBody.long)
+        },
+        gender: reqBody.gender,
+        hasSelectedTrades: false,
+        dateOfBirth: customUtils.myParseInt(reqBody.dateOfBirth),
+        lastSalary: customUtils.myParseInt(reqBody.lastSalary),
         communication: reqBody.communication,
         hasBike: customUtils.stringToBoolean(reqBody.hasBike),
         license: reqBody.license,
@@ -146,18 +188,19 @@ var sanitizePayload = function (reqBody) {
         trades: {},
         comments: reqBody.comments,
         leaderId: leaderId, //denormalized for easy search, but graph relationships included
-        avatar: ((theImageInS3) ? theImageInS3.url : ""),
-        avatarThumb: ((theImageInS3) ? theImageInS3.urlThumb : "")
+        // avatar: ((theImageInS3) ? theImageInS3.url : ""),
+        // avatarThumb: ((theImageInS3) ? theImageInS3.urlThumb : "")
     }
 
     constants.trades.forEach(function (trade) {
-        if (req.body[trade]) {
+        if (reqBody[trade]) {
             hasSelectedTrades = true
-            jobSeekerPayload["trades"][trade] = req.body[trade]
+            jobSeekerPayload["trades"][trade] = reqBody[trade]
         }
     })
     jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
 }
+
 
 function createTradeQuery(trade) {
     return dbUtils.createExistsQuery("value.trades."+trade)
@@ -169,5 +212,7 @@ module.exports = {
     getTheLeader: getTheLeader,
     injectLeader : injectLeader,
     checkIfNewUser : checkIfNewUser,
-    createTradeQuery : createTradeQuery
+    createTradeQuery : createTradeQuery,
+    validatePostPromise : validatePostPromise,
+    validatePatchPromise : validatePatchPromise
 }

@@ -63,32 +63,32 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         queries.push(ageQuery)
     }
 
-    if(req.query.educationLevel) {
+    if (req.query.educationLevel) {
         console.log("minimum education query")
         queries.push(VacancyModel.createEducationQuery(req.query.educationLevel))
     }
 
-    if(req.query.communication) {
+    if (req.query.communication) {
         console.log("minimum communication query")
         queries.push(VacancyModel.createCommunicationQuery(req.query.communication))
     }
 
-    if(req.query.license) {
+    if (req.query.license) {
         console.log("minimum license query")
         queries.push(VacancyModel.createLicenseQuery(req.query.license))
     }
 
-    if(req.query.computer) {
+    if (req.query.computer) {
         console.log("minimum computer proficiency query")
         queries.push(VacancyModel.createComputerQuery(req.query.computer))
     }
 
-    if(req.query.hasSmartphone) {
+    if (req.query.hasSmartphone) {
         console.log("hasSmartphone query")
         queries.push(VacancyModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
     }
 
-    if(req.query.hasBike) {
+    if (req.query.hasBike) {
         console.log("hasBike query")
         queries.push(VacancyModel.createHasBikeQuery(req.query.hasBike))
     }
@@ -149,67 +149,40 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
 }])
 
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
-    var leaderId = req.body.leaderId || req.user.results[0].path.key;
     var otp = req.body.otp
-    var hasSelectedTrades = false
+    console.log("the request")
+    console.log(req.body)
+    JobseekerModel.validatePostPromise(req)
+        .then(function (validations) {
+            var errors = validations.errors
+            var jobSeekerPayload = validations.req.body
 
-    var validations = VacancyModel.validatePostVacancy(req)
-    var errors = validations.errors
-    var vacancyPayload = validations.req.body
+            if (errors) {
+                customUtils.sendErrors(errors, res)
+            } else {
+                customUtils.upload(req.files.avatar, function (theImageInS3) {
+                    jobSeekerPayload["avatar"] = ((theImageInS3) ? theImageInS3.url : "")
+                    jobSeekerPayload["avatarThumb"] = ((theImageInS3) ? theImageInS3.urlThumb : "")
 
-    customUtils.upload(req.files.avatar, function (theImageInS3) {
-        console.log(theImageInS3)
-        var jobSeekerPayload = {
-            name: req.body.name,
-            mobile: req.body.mobile,
-            educationLevel: req.body.educationLevel,
-            mobileVerified: false,
-            interview_count: 0,
-            location_name: req.body.location_name,
-            location: {
-                lat: parseFloat(req.body.lat),
-                long: parseFloat(req.body.long)
-            },
-            gender: req.body.gender,
-            hasSelectedTrades: false,
-            dateOfBirth: parseInt(req.body.dateOfBirth),
-            lastSalary: req.body.lastSalary,
-            communication: req.body.communication,
-            hasBike: customUtils.stringToBoolean(req.body.hasBike),
-            license: req.body.license,
-            hasSmartphone: customUtils.stringToBoolean(req.body.hasSmartphone),
-            computer: req.body.computer,
-            trades: {},
-            comments: req.body.comments,
-            leaderId: leaderId, //denormalized for easy search, but graph relationships included
-            avatar: ((theImageInS3) ? theImageInS3.url : ""),
-            avatarThumb: ((theImageInS3) ? theImageInS3.urlThumb : "")
-        }
-
-        constants.trades.forEach(function (trade) {
-            if (req.body[trade]) {
-                hasSelectedTrades = true
-                jobSeekerPayload["trades"][trade] = req.body[trade]
+                    JobseekerModel.create(jobSeekerPayload["leaderId"], jobSeekerPayload)
+                        .then(function (response) {
+                            var message = "Your OTP : " + otp
+                            customUtils.sendSms(message, jobSeekerPayload.mobile)
+                            res.send({
+                                data: response
+                            })
+                            res.status(200)
+                        })
+                        .fail(function (err) {
+                            customUtils.sendErrors(err, res)
+                        })
+                })
             }
         })
-        jobSeekerPayload["hasSelectedTrades"] = hasSelectedTrades
-
-        console.log("leader id " + leaderId)
-        console.log(jobSeekerPayload)
-
-        JobseekerModel.create(leaderId, jobSeekerPayload)
-            .then(function (response) {
-                var message = "Your OTP : " + otp
-                customUtils.sendSms(message, jobSeekerPayload.mobile)
-                res.send({
-                    data: response
-                })
-                res.status(200)
-            })
-            .fail(function (err) {
-                customUtils.sendErrors(err, 422, res)
-            })
-    })
+        .fail(function (err) {
+            console.log("limbo")
+            console.log(err)
+        })
 }])
 
 router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {

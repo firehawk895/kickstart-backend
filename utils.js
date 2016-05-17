@@ -164,6 +164,7 @@ function sendSms(message, phoneNumber) {
 }
 
 function validateMe(req, schema, sanitizer) {
+    console.log("validation in the process")
     try {
         req.checkBody(schema)
     }
@@ -192,6 +193,8 @@ function validateMe(req, schema, sanitizer) {
 }
 
 function validateMePromise(req, schema, sanitizer) {
+    console.log("validateMePromise")
+    console.log(req.body)
     var returnPayloadPromise = kew.defer()
     try {
         req.checkBody(schema)

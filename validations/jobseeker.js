@@ -93,4 +93,9 @@ module.exports = {
             errorMessage: "File should be a valid image"
         }
     },
+    'leaderId': {
+        notEmpty : {
+            errorMessage: "Please select the leader for which the jobseeker is assigned to "
+        }
+    }
 }

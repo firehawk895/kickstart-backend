@@ -57,7 +57,7 @@ module.exports = {
             })
         },
         isNewJobseeker : function(mobile) {
-            console.log("isNewUser time")
+            console.log("custom validation : isNewJobseeker")
             return new Promise(function (resolve, reject) {
                 JobseekerModel.checkIfNewUser(mobile)
                     .then(function (results) {

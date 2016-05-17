@@ -48,7 +48,10 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(expressValidator({
-    customValidators : customValidations
+    errorFormatter : function (param, msg, value) {
+        return msg
+    },
+    customValidators : customValidations.customValidators
 }));
 app.use('/csv', express.static('csv'));
 

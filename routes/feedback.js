@@ -29,6 +29,8 @@ var userRef = new Firebase(feedbackRefUrl, config.firebase.secret);
  */
 userRef.on("child_added", function (snapshot) {
     var username = snapshot.key()
+    var displayName = snapshot.valueOf("displayName")
+    
     var messageRef = new Firebase(feedbackRefUrl + "/" + username, config.firebase.secret)
     /**
      * Register a listener for a user's message
@@ -47,7 +49,7 @@ userRef.on("child_added", function (snapshot) {
             if (messageObj.displayName != "Kickstart") {
                 console.log("time to post")
                 request.post(config.newSlack.feedbackHook, {
-                    body: JSON.stringify({text: "*$" + username + "() : " + messageObj.text + "*"})
+                    body: JSON.stringify({text: "*$" + username + "(" + displayName + ") : " + messageObj.text + "*"})
                 })
             }
         }

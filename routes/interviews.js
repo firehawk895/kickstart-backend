@@ -121,7 +121,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
         .then(function(results) {
             var finalPayload = dbUtils.injectId(results)[0]
             res.send({
-                data: finalPayload
+                data: [finalPayload]
             })
             res.status(200)
             var message =

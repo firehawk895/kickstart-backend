@@ -157,6 +157,8 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
 
             if (errors) {
                 customUtils.sendErrors(errors, res)
+                console.log("errors")
+                console.log(errors)
             } else {
                 customUtils.upload(req.files.avatar, function (theImageInS3) {
                     jobSeekerPayload["avatar"] = ((theImageInS3) ? theImageInS3.url : "")
@@ -193,6 +195,8 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), 
             var jobSeekerPayload = validations.req.body
 
             if (errors) {
+                console.log("errors")
+                console.log(errors)
                 customUtils.sendErrors(errors, res)
             } else {
                 console.log("heres the jobSeekerPayload")

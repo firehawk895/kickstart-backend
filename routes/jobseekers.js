@@ -65,32 +65,32 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
 
     if (req.query.educationLevel) {
         console.log("minimum education query")
-        queries.push(VacancyModel.createEducationQuery(req.query.educationLevel))
+        queries.push(JobseekerModel.createEducationQuery(req.query.educationLevel))
     }
 
     if (req.query.communication) {
         console.log("minimum communication query")
-        queries.push(VacancyModel.createCommunicationQuery(req.query.communication))
+        queries.push(JobseekerModel.createCommunicationQuery(req.query.communication))
     }
 
     if (req.query.license) {
         console.log("minimum license query")
-        queries.push(VacancyModel.createLicenseQuery(req.query.license))
+        queries.push(JobseekerModel.createLicenseQuery(req.query.license))
     }
 
     if (req.query.computer) {
         console.log("minimum computer proficiency query")
-        queries.push(VacancyModel.createComputerQuery(req.query.computer))
+        queries.push(JobseekerModel.createComputerQuery(req.query.computer))
     }
 
     if (req.query.hasSmartphone) {
         console.log("hasSmartphone query")
-        queries.push(VacancyModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
+        queries.push(JobseekerModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
     }
 
     if (req.query.hasBike) {
         console.log("hasBike query")
-        queries.push(VacancyModel.createHasBikeQuery(req.query.hasBike))
+        queries.push(JobseekerModel.createHasBikeQuery(req.query.hasBike))
     }
 
     if (req.query.trade) {
@@ -108,7 +108,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
             .collection("jobseekers")
             .limit(limit)
             .offset(offset)
-            .sortBy('value.location', 'distance:asc')
+            .sort('location', 'distance:asc')
             .query(theFinalQuery)
         promises.push(distanceQuery)
     } else {

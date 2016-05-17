@@ -122,6 +122,38 @@ function validatePatchPromise(req) {
     return customUtils.validateMePromise(req, patchSchema, sanitizePatchPayload)
 }
 
+/**
+ * @param educationLevel
+ * @returns {string}
+ */
+function createEducationQuery(educationLevel) {
+    return dbUtils.createGreaterLevelQueries("educationLevel",constants.education, educationLevel)
+}
+
+function createCommunicationQuery(communicationLevel) {
+    return dbUtils.createGreaterLevelQueries("communication",constants.communication, communicationLevel)
+}
+
+function createLicenseQuery(licenseLevel) {
+    return dbUtils.createGreaterLevelQueries("license",constants.license, licenseLevel)
+}
+
+function createComputerQuery(computerLevel) {
+    return dbUtils.createGreaterLevelQueries("computer",constants.computer, computerLevel)
+}
+
+function createHasSmartPhoneQuery(hasSmartphone) {
+    return "value.hasSmartphone:" + hasSmartphone
+}
+
+function createHasBikeQuery(hasBike) {
+    return "value.hasBike:" + hasBike
+}
+
+function createTradeQuery(trade) {
+    return dbUtils.createFieldQuery("trade", trade)
+}
+
 var sanitizePostPayload = function (reqBody) {
     var hasSelectedTrades = false
     var jobSeekerPayload = {
@@ -214,5 +246,12 @@ module.exports = {
     checkIfNewUser: checkIfNewUser,
     createTradeQuery: createTradeQuery,
     validatePostPromise: validatePostPromise,
-    validatePatchPromise: validatePatchPromise
+    validatePatchPromise: validatePatchPromise,
+    createEducationQuery : createEducationQuery,
+    createCommunicationQuery : createCommunicationQuery,
+    createLicenseQuery : createLicenseQuery,
+    createComputerQuery : createComputerQuery,
+    createHasSmartPhoneQuery : createHasSmartPhoneQuery,
+    createHasBikeQuery : createHasBikeQuery,
+    createTradeQuery : createTradeQuery
 }

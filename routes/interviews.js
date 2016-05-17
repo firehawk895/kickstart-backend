@@ -30,7 +30,6 @@ var passport = require('passport');
 
 //schedule an interview
 router.post('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
-    console.log("kaun ho tum")
     var responseObj = {}
     // var leaderId = req.user.results[0].path.key;
     //use for authorization of leader
@@ -45,7 +44,6 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         status: constants.interviewStatus.scheduled,
         // leaderId: leaderId //better you find the 
     }
-    console.log(interviewPayload)
 
     var vacancy
     var jobseeker
@@ -53,25 +51,16 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
         .then(function (results) {
             vacancy = results[0]
             jobseeker = results[1]
-            console.log("stage1")
             return InterviewModel.create(interviewPayload)
         })
         .then(function (interviewPayload) {
-            console.log("lets verify the id")
-            console.log(interviewPayload.id)
-            console.log("lets verify the id")
             return InterviewModel.getInterview(interviewPayload.id)
         })
         .then(function(interviewResults) {
-            console.log("test bed ------------------")
-            console.log(interviewResults)
-            console.log("test bed ------------------")
             return InterviewModel.injectVacancyAndJobseeker(interviewResults)
         })
         .then(function(results) {
-            console.log("finals stage")
             var theResults = dbUtils.injectId(results)
-            console.log(theResults)
             res.send({
                 data: theResults
             })
@@ -79,7 +68,6 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
             var message = "An interview has been scheduled for " +
                     "job details : " + theResults[0].vacancy.jobTitle + ", " + theResults[0].vacancy.company +
                     ". Time : " + customUtils.getFormattedDate(theResults[0].interviewTime)
-            console.log(message)
             customUtils.sendSms(message, theResults[0].jobseeker.mobile)
         })
         .fail(function (err) {
@@ -108,9 +96,6 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
         leavingDate: req.body.leavingDate
     }
     
-    console.log(interviewId)
-    console.log(interviewPayload)
-
     InterviewModel.edit(interviewId, interviewPayload)
         .then(function (response) {
             return InterviewModel.getInterview(interviewId)
@@ -207,21 +192,21 @@ router.get('/csv', [passport.authenticate('bearer', {session: false}), function 
     
 }])
 
-function sleeper(interviewResults) {
-    var sleeper = kew.defer()
-    sleep(5000, function() {
-        // executes after one second, and blocks the thread
-        sleeper.resolve(interviewResults)
-    });
-    return sleeper
-}
-
-function sleep(time, callback) {
-    var stop = new Date().getTime();
-    while(new Date().getTime() < stop + time) {
-        ;
-    }
-    callback();
-}
+// function sleeper(interviewResults) {
+//     var sleeper = kew.defer()
+//     sleep(5000, function() {
+//         // executes after one second, and blocks the thread
+//         sleeper.resolve(interviewResults)
+//     });
+//     return sleeper
+// }
+//
+// function sleep(time, callback) {
+//     var stop = new Date().getTime();
+//     while(new Date().getTime() < stop + time) {
+//         ;
+//     }
+//     callback();
+// }
 
 module.exports = router

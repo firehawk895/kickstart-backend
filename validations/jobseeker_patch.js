@@ -6,15 +6,15 @@ module.exports = {
             errorMessage: 'Name cannot be empty'
         }
     },
-    'mobile': {//
+    'mobile': {
         optional : true,
         isMobilePhone: {
             options: ['en-IN'],
             errorMessage: 'Enter a valid Indian mobile number'
         },
-        // isNewJobseeker: {
-        //     errorMessage: 'Jobseeker mobile already registered'
-        // }
+        isNewJobseeker: {
+            errorMessage: 'Jobseeker mobile already registered'
+        }
     },
     'educationLevel': {
         optional : true,

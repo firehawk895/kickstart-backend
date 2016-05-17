@@ -127,10 +127,10 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
             var message =
                 "Your interview has been updated! " +
                 "status : " + finalPayload.status +
-                 ", time : " + finalPayload.interviewTime
+                 ", time : " + customUtils.getFormattedDate(finalPayload.interviewTime)
 
             //you obviously dont want to send an sms with the monetized status
-            if(finalPayload.status == constants.interviewStatus.cleared)
+            if(finalPayload.status == constants.interviewStatus.cleared || req.body.interviewTime)
                 customUtils.sendSms(message, finalPayload.jobseeker.mobile)
         })
         .fail(function (err) {

@@ -42,7 +42,7 @@ module.exports = {
     'gender': {
         optional : true,
         isIn: {
-            options: constants.gender,
+            options: [constants.gender],
             errorMessage: 'Please enter a valid gender'
         }
     },

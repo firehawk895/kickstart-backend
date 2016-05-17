@@ -73,9 +73,11 @@ module.exports = {
     interviewStatus: {
         scheduled: "scheduled",
         appeared: "appeared",
+        notAppeared: "not-appeared",
         cleared: "cleared",
+        notCleared: "notCleared",
         joined: "joined",
-        monetized: "monetized"
+        monetized: "monetized",
     },
     notifications: {
         path: "/notifications",

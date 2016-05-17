@@ -28,12 +28,15 @@ function create(vacancyPayload) {
  * @returns {*}
  */
 function createAgeQuery(age) {
-    var queries = []
+    // var queries = []
     //this means greater than equalto
-    queries.push("value.age_min:" + age + "~*")
+    // queries.push("value.age_min:" + age + "~*")
     //this means less than equalto
     //queries.push("value.age_max:" + age + "*~")
-    var finalQuery = dbUtils.queryJoiner(queries)
+    // var finalQuery = dbUtils.queryJoiner(queries)
+    // return finalQuery
+
+    var finalQuery = "value.age_min:[0 TO " + age + "]" 
     return finalQuery
 }
 

@@ -235,6 +235,20 @@ function createLevelQueries(field, levelObject, level) {
     return queryJoinerOr(queries)
 }
 
+function createGreaterLevelQueries(field, levelObject, level) {
+    var queries = []
+    var levels = Object.keys(levelObject)
+    var theNumericLevel = levelObject[level] || 0
+
+    levels.forEach(function (theLevel) {
+        console.log(levelObject[theLevel])
+        console.log(theNumericLevel)
+        if (levelObject[theLevel] >= theNumericLevel)
+            queries.push(createFieldQuery(field, theLevel))
+    })
+    return queryJoinerOr(queries)
+}
+
 //test cases
 // console.log(dbUtils.createLevelQueries("educationLevel", constants.education, "10th pass"))
 // console.log(dbUtils.createLevelQueries("communication", constants.communication, "Basic english"))
@@ -395,7 +409,8 @@ module.exports = {
     createExistsQuery: createExistsQuery,
     createLevelQueries: createLevelQueries,
     generateCsvFile: generateCsvFile,
-    emptyOrchestrateResponse : emptyOrchestrateResponse
+    emptyOrchestrateResponse : emptyOrchestrateResponse,
+    createGreaterLevelQueries : createGreaterLevelQueries
 }
 
 

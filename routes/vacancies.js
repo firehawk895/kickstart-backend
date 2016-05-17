@@ -117,6 +117,7 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     if (req.query.communication) {
         console.log("minimum communication query")
         queries.push(VacancyModel.createCommunicationQuery(req.query.communication))
+        console.log(VacancyModel.createCommunicationQuery(req.query.communication))
     }
 
     if (req.query.license) {

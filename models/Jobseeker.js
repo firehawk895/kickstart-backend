@@ -215,7 +215,7 @@ var sanitizePatchPayload = function (reqBody) {
         license: reqBody.license,
         hasSmartphone: customUtils.stringToBoolean(reqBody.hasSmartphone),
         computer: reqBody.computer,
-        trades: {},
+        trades: undefined,
         comments: reqBody.comments,
         leaderId: reqBody.leaderId, //denormalized for easy search, but graph relationships included
         // avatar: ((theImageInS3) ? theImageInS3.url : ""),

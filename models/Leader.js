@@ -43,8 +43,10 @@ var sanitizePayload = function (reqBody) {
         mobile: reqBody.mobile,
         isVerified: customUtils.stringToBoolean(reqBody.isVerified),
         location_name: reqBody.location_name,
-        lat: reqBody.lat,
-        long: reqBody.long
+        location : {
+            lat: customUtils.myParseFloat(reqBody.lat),
+            long: customUtils.myParseFloat(reqBody.long)
+        }
     }
     return leaderPayload
 }

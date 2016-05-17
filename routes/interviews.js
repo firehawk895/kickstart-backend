@@ -67,7 +67,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), function (r
             res.status(200)
             var message = "An interview has been scheduled for " +
                     "job details : " + theResults[0].vacancy.jobTitle + ", " + theResults[0].vacancy.company +
-                    ". Time : " + customUtils.getFormattedDate(theResults[0].interviewTime)
+                    ". Time : " + customUtils.getFormattedDate(theResults[0].interviewTime/1000)
             customUtils.sendSms(message, theResults[0].jobseeker.mobile)
         })
         .fail(function (err) {
@@ -112,7 +112,7 @@ router.patch('/', [passport.authenticate('bearer', {session: false}), function (
             var message =
                 "Your interview has been updated! " +
                 "status : " + finalPayload.status +
-                 ", time : " + customUtils.getFormattedDate(finalPayload.interviewTime)
+                 ", time : " + customUtils.getFormattedDate(finalPayload.interviewTime/1000)
 
             //you obviously dont want to send an sms with the monetized status
             if(finalPayload.status == constants.interviewStatus.cleared || req.body.interviewTime)

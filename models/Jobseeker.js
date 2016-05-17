@@ -195,6 +195,7 @@ var sanitizePostPayload = function (reqBody) {
 }
 
 var sanitizePatchPayload = function (reqBody) {
+    var doesThisPatchHaveTrades = false
     var jobSeekerPayload = {
         name: reqBody.name,
         mobile: reqBody.mobile,
@@ -207,7 +208,7 @@ var sanitizePatchPayload = function (reqBody) {
             long: customUtils.myParseFloat(reqBody.long)
         },
         gender: reqBody.gender,
-        hasSelectedTrades: undefined,
+        hasSelectedTrades: undefined, //preserve old values
         dateOfBirth: customUtils.myParseInt(reqBody.dateOfBirth),
         lastSalary: customUtils.myParseInt(reqBody.lastSalary),
         communication: reqBody.communication,
@@ -215,7 +216,7 @@ var sanitizePatchPayload = function (reqBody) {
         license: reqBody.license,
         hasSmartphone: customUtils.stringToBoolean(reqBody.hasSmartphone),
         computer: reqBody.computer,
-        // trades: undefined,
+        trades: {},
         comments: reqBody.comments,
         leaderId: reqBody.leaderId, //denormalized for easy search, but graph relationships included
         // avatar: ((theImageInS3) ? theImageInS3.url : ""),
@@ -226,11 +227,15 @@ var sanitizePatchPayload = function (reqBody) {
         if (reqBody[trade]) {
             jobSeekerPayload["trades"][trade] = reqBody[trade]
             jobSeekerPayload["hasSelectedTrades"] = true
+            doesThisPatchHaveTrades = true
         }
         else
             jobSeekerPayload["trades"][trade] = null //ensures an old key is deleted
-        // (not required, expect front end to send all trades again)
     })
+    
+    if(!doesThisPatchHaveTrades)
+        jobSeekerPayload["trades"] = undefined //make sure old values are preserved in this case
+    
     return jobSeekerPayload
 }
 

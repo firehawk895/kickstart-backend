@@ -52,19 +52,23 @@ var sanitizePayload = function (reqBody) {
 }
 
 var deleteAllTokens = function(leaderId) {
-    var query = "value.user" + leaderId
+    console.log("what the hell mabasdadasdasd")
+    var query = "value.user:" + leaderId
     db.newSearchBuilder()
         .collection("tokens")
         .query(query)
         .then(function(results) {
             var theTokens = dbUtils.injectId(results)
             theTokens.forEach(function(theToken) {
+                console.log("tokens : ")
+                console.log(theToken.id)
                 db.remove('tokens', theToken.id, true)
                     .then(function (result) {
-
+                        console.log("hey look success")
                     })
                     .fail(function (err) {
-
+                        console.log("error on token")
+                        console.log(err)
                     })
             })
         })

@@ -259,7 +259,7 @@ function generateToken(length) {
  * @returns {string}
  */
 function getFormattedDate(unix_timestamp) {
-    var date = new Date(unix_timestamp, "Asia/Kolkata");
+    var date = new Date(unix_timestamp + 330 * 60000);
 
 // Hours part from the timestamp
     var hours = date.getHours();

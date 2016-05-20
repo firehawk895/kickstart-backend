@@ -120,7 +120,7 @@ function signUpLeader(name, mobile, location_name, lat, long) {
         name: name,
         mobile: mobile,
         mobileVerified: false,
-        isVerified: false, //is he a verified leader --> verification by kickstart team
+        isVerified: true, //is he a verified leader --> verification by kickstart team
         last_seen: date.getTime(),
         created: date.getTime(),
         isLeader: true,

@@ -70,6 +70,7 @@ module.exports = {
         "Field Supervisor",
         "Kitchen Staff"
     ],
+    //interviewStatus should not be changed without changing app:
     interviewStatus: {
         scheduled: "scheduled",
         appeared: "appeared",

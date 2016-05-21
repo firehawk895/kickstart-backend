@@ -83,10 +83,11 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         queries.push(JobseekerModel.createComputerQuery(req.query.computer))
     }
 
-    if (req.query.hasSmartphone) {
-        console.log("hasSmartphone query")
-        queries.push(JobseekerModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
-    }
+    //removing smartphone mapping now
+    // if (req.query.hasSmartphone) {
+    //     console.log("hasSmartphone query")
+    //     queries.push(JobseekerModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
+    // }
 
     if (req.query.hasBike) {
         console.log("hasBike query")

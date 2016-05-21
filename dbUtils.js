@@ -390,6 +390,32 @@ function getAllItems(collection, query) {
     return allItems
 }
 
+/**
+ * those boolean queries that require jobseekers to map to vacancy
+ * @param key
+ * @param boolValue
+ * @returns {string}
+ */
+function createThoseBooleanQueries(key, boolValue) {
+    if(boolValue == "false")
+        return "value." + key + ":" + boolValue
+    else
+        return "(value." + key + ":true OR value." + key + ":false)"
+}
+
+/**
+ * those boolean queries that require vacancies to map to jobseekers
+ * @param key
+ * @param boolValue
+ * @returns {string}
+ */
+function createReverseBooleanQueries(key, boolValue) {
+    if(boolValue == "true")
+        return "value." + key + ":" + boolValue
+    else
+        return "(value." + key + ":true OR value." + key + ":false)"
+}
+
 module.exports = {
     injectId: injectId,
     createGetOneOnOneGraphRelationQuery: createGetOneOnOneGraphRelationQuery,
@@ -410,7 +436,9 @@ module.exports = {
     createLevelQueries: createLevelQueries,
     generateCsvFile: generateCsvFile,
     emptyOrchestrateResponse : emptyOrchestrateResponse,
-    createGreaterLevelQueries : createGreaterLevelQueries
+    createGreaterLevelQueries : createGreaterLevelQueries,
+    createThoseBooleanQueries : createThoseBooleanQueries,
+    createReverseBooleanQueries : createReverseBooleanQueries
 }
 
 

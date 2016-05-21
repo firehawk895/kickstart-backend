@@ -143,11 +143,11 @@ function createComputerQuery(computerLevel) {
 }
 
 function createHasSmartPhoneQuery(hasSmartphone) {
-    return "value.hasSmartphone:" + hasSmartphone
+    return dbUtils.createReverseBooleanQueries("hasSmartphone", hasSmartphone)
 }
 
 function createHasBikeQuery(hasBike) {
-    return "value.hasBike:" + hasBike
+    return dbUtils.createReverseBooleanQueries("hasBike", hasBike)
 }
 
 function createTradeQuery(trade) {

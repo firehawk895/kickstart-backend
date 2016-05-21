@@ -131,10 +131,10 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     }
 
     //not mapping smartphone for a while
-    // if (req.query.hasSmartphone) {
-    //     console.log("hasSmartphone query")
-    //     queries.push(VacancyModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
-    // }
+    if (req.query.hasSmartphone) {
+        console.log("hasSmartphone query")
+        queries.push(VacancyModel.createHasSmartPhoneQuery(req.query.hasSmartphone))
+    }
 
     if (req.query.hasBike) {
         console.log("hasBike query")

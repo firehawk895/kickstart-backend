@@ -30,6 +30,9 @@ module.exports = {
             options: ['en-IN'],
             errorMessage: 'Enter a valid Indian mobile number'
         },
+        isNewUser: {
+            errorMessage: 'Leader mobile already registered'
+        }
     },
     'isVerified': {
         optional: true,

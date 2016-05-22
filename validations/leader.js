@@ -6,19 +6,16 @@ module.exports = {
         }
     },
     'location_name': {
-        optional: true,
         notEmpty : {
             errorMessage : "Please enter location for the leader"
         }
     },
     'lat': {//
-        optional: true,
         isLat: {
             errorMessage: "Enter a valid latitude"
         }
     },
     'long': {//
-        optional: true,
         isLong: {
             errorMessage: "Enter a valid longitude"
         }
@@ -34,7 +31,6 @@ module.exports = {
         }
     },
     'isVerified': {
-        optional: true,
         isBoolean: {
             errorMessage: 'isVerified status must be true/false'
         }

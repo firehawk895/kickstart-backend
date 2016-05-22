@@ -38,28 +38,28 @@ function validatePostLogin(req) {
 }
 
 var sanitizePayload = function (reqBody) {
+    console.log("sanitizePayload of reqBody")
+    console.log(reqBody)
     var leaderPayload = {
         name: reqBody.name,
         mobile: reqBody.mobile,
         isVerified: customUtils.stringToBoolean(reqBody.isVerified),
         location_name: reqBody.location_name,
-        location : {
-            lat: customUtils.myParseFloat(reqBody.lat),
-            long: customUtils.myParseFloat(reqBody.long)
-        }
+        lat: customUtils.myParseFloat(reqBody.lat),
+        long: customUtils.myParseFloat(reqBody.long)
     }
     return leaderPayload
 }
 
-var deleteAllTokens = function(leaderId) {
+var deleteAllTokens = function (leaderId) {
     console.log("what the hell mabasdadasdasd")
     var query = "value.user:" + leaderId
     db.newSearchBuilder()
         .collection("tokens")
         .query(query)
-        .then(function(results) {
+        .then(function (results) {
             var theTokens = dbUtils.injectId(results)
-            theTokens.forEach(function(theToken) {
+            theTokens.forEach(function (theToken) {
                 console.log("tokens : ")
                 console.log(theToken.id)
                 db.remove('tokens', theToken.id, true)
@@ -79,5 +79,5 @@ module.exports = {
     validatePostLeaderPromise: validatePostLeaderPromise,
     validatePatchLeaderPromise: validatePatchLeaderPromise,
     validatePostLogin: validatePostLogin,
-    deleteAllTokens : deleteAllTokens
+    deleteAllTokens: deleteAllTokens
 }

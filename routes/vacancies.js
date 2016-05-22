@@ -24,7 +24,7 @@ router.get('/test', function (req, res) {
         })
 })
 
-router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
+router.post('/', [ multer(), function (req, res) {
     console.log(req.body)
     var validations = VacancyModel.validatePostVacancy(req)
     var errors = validations.errors
@@ -48,7 +48,7 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
     }
 }])
 
-router.patch('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
+router.patch('/', [multer(), function (req, res) {
     var id = req.query.id
     //TODO : also support additional fields
 

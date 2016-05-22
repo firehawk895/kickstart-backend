@@ -25,16 +25,24 @@ module.exports = {
             return file.mimetype.match(/^image/)
         },
         isValidInterviewDate: function (value) {
+            function hasDuplicates(array) {
+                return (new Set(array)).size !== array.length;
+            }
+            
             var result = true
             //expected value has more than 1 interview date
             //and is an array
             if (Array.isArray(value)) {
-                value.forEach(function (aValue) {
-                    if (!validator.isInt(aValue)) {
-                        console.log("not an int")
-                        result = false
-                    }
-                })
+                if(hasDuplicates(value))
+                    return false
+                else {
+                    value.forEach(function (aValue) {
+                        if (!validator.isInt(aValue)) {
+                            console.log("not an int")
+                            result = false
+                        }
+                    })
+                }
             } else {
                 //expected input has 1 value from request body
                 //and is not an array

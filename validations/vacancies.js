@@ -88,7 +88,7 @@ module.exports = {
     'interview_dates': {
         // optional: undefined,
         isValidInterviewDate: {
-            errorMessage: "Make sure all interview dates are valid"
+            errorMessage: "Invalid or duplicate interview dates"
         }
     },
     'trade': {

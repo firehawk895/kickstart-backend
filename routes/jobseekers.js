@@ -168,8 +168,8 @@ router.post('/', [passport.authenticate('bearer', {session: false}), multer(), f
 
                     JobseekerModel.create(jobSeekerPayload["leaderId"], jobSeekerPayload)
                         .then(function (response) {
-                            var message = "Your OTP : " + otp
-                            if (otp) customUtils.sendSms(message, jobSeekerPayload.mobile)
+                            // var message = "Your OTP : " + otp
+                            // if (otp) customUtils.sendSms(message, jobSeekerPayload.mobile)
                             res.send({
                                 data: response
                             })

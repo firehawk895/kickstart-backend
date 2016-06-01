@@ -8,6 +8,10 @@ var customUtils = require('../utils')
 var kew = require('kew')
 
 function create(leaderId, jobseekerPayload) {
+    console.log("time to create jobseeker")
+    console.log("for leader : " + leaderId)
+    console.log("for payload : ")
+    console.log(jobseekerPayload)
     var createdJobSeekerPromise = kew.defer()
     db.post("jobseekers", jobseekerPayload)
         .then(function (result) {

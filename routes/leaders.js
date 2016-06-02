@@ -143,6 +143,20 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         })
 }])
 
+router.get('/autocomplete', [passport.authenticate('bearer', {session: false}), function (req, res) {
+    var responseObj = {}
+    dbUtils.getAllItemsWithFields("users", "value.isLeader:true", ["value.name", "value.mobile"])
+        .then(function(results) {
+            // responseObj["total_count"] = results.body.total_count
+            responseObj["data"] = results
+            res.status(200)
+            res.json(responseObj)
+        })
+        .fail(function (err) {
+            customUtils.sendErrors(err, res)
+        })
+}])
+
 router.get('/csv', [passport.authenticate('bearer', {session: false}), function (req, res) {
     //TODO: after improving the system to token authentication
     //TODO: ensure authorization by allowing only admin tokens to download this sensitive

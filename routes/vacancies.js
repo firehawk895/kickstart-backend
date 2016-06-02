@@ -197,6 +197,20 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
     //id= will give 1 vacancies details
 }])
 
+router.get('/autocomplete', [passport.authenticate('bearer', {session: false}), function (req, res) {
+    var responseObj = {}
+    dbUtils.getAllItemsWithFields("vacancies", "@path.kind:item", ["value.jobTitle", "value.company", "value.location_name"])
+        .then(function(results) {
+            // responseObj["total_count"] = results.body.total_count
+            responseObj["data"] = results
+            res.status(200)
+            res.json(responseObj)
+        })
+        .fail(function (err) {
+            customUtils.sendErrors(err, res)
+        })
+}])
+
 router.delete('/', [passport.authenticate('bearer', {session: false}), function (req, res, next) {
     var vacancyId = req.query.id
 

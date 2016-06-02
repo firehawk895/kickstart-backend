@@ -149,6 +149,20 @@ router.get('/', [passport.authenticate('bearer', {session: false}), function (re
         })
 }])
 
+router.get('/autocomplete', [passport.authenticate('bearer', {session: false}), function (req, res) {
+    var responseObj = {}
+    dbUtils.getAllItemsWithFields("jobseekers", "@path.kind:item", ["value.name", "value.mobile"])
+        .then(function(results) {
+            // responseObj["total_count"] = results.body.total_count
+            responseObj["data"] = results
+            res.status(200)
+            res.json(responseObj)
+        })
+        .fail(function (err) {
+            customUtils.sendErrors(err, res)
+        })
+}])
+
 router.post('/', [passport.authenticate('bearer', {session: false}), multer(), function (req, res) {
     req.body.leaderId = req.body.leaderId || req.user.results[0].path.key;
     var otp = req.body.otp

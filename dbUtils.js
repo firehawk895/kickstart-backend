@@ -324,6 +324,48 @@ function allItemsPromisesList(collection, query) {
     return promiseList
 }
 
+/**
+ * @refer - allItemsPromisesList(collection, query)
+ * this API allows you to additionally select the fields
+ * @param collection
+ * @returns {!Promise}
+ */
+function allItemsPromisesListWithFields(collection, query, fields) {
+    console.log("inside allItemsPromisesList")
+    var promiseList = kew.defer()
+    var promiseListArray = []
+    var offset = 0
+    db.newSearchBuilder()
+        .collection(collection)
+        .withFields(fields)
+        .limit(100)
+        .offset(offset)
+        .query(query)
+        .then(function (results) {
+            console.log("this many results")
+            console.log(results.body.total_count)
+            var totalCount = results.body.total_count
+            var remaining = 0
+            do {
+                promiseListArray.push(
+                    db.newSearchBuilder()
+                        .collection(collection)
+                        .withFields(fields)
+                        .limit(100)
+                        .offset(offset)
+                        .query(query)
+                )
+                offset += 100
+                remaining = totalCount - offset;
+            } while (remaining > 0)
+            promiseList.resolve(promiseListArray)
+        })
+        .fail(function (err) {
+            promiseList.reject(err)
+        })
+    return promiseList
+}
+
 function generateCsv(collection, query) {
     var generatedCsvStatus = kew.defer()
     getAllItems(collection, query)
@@ -391,6 +433,34 @@ function getAllItems(collection, query) {
 }
 
 /**
+ * @refer - getAllItems(collection, query)
+ * @param collection
+ * @param query
+ * @returns {!Promise}
+ */
+function getAllItemsWithFields(collection, query, fields) {
+    var allItems = kew.defer()
+    allItemsPromisesListWithFields(collection, query, fields)
+        .then(function (promiseList) {
+            return kew.all(promiseList)
+        })
+        .then(function (promiseResults) {
+            var allItemsList = []
+            console.log(injectId(promiseResults[0]))
+            promiseResults.forEach(function (item) {
+                // console.log(item.body.results[0].path.destination)
+                var injectedItems = injectId(item)
+                allItemsList = allItemsList.concat(injectedItems)
+            })
+            allItems.resolve(allItemsList)
+        })
+        .fail(function (err) {
+            allItems.reject(err)
+        })
+    return allItems
+}
+
+/**
  * those boolean queries that require jobseekers to map to vacancy
  * @param key
  * @param boolValue
@@ -431,6 +501,7 @@ module.exports = {
     queryJoinerOr: queryJoinerOr,
     getAllResultsFromList: getAllResultsFromList,
     getAllItems: getAllItems,
+    getAllItemsWithFields : getAllItemsWithFields,
     createFuzzyQuery: createFuzzyQuery,
     createExistsQuery: createExistsQuery,
     createLevelQueries: createLevelQueries,
